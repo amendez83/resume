@@ -24,22 +24,13 @@
     background: var(--bg);
     color: var(--cmd);
     font-family: 'VT323', monospace;
-    font-size: 17px;
+    font-size: 18px;
     line-height: 1.5;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 28px 16px 72px;
-  }
-  /* Escaneo de líneas estilo monitor antiguo */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: repeating-linear-gradient(to bottom, transparent 0px, transparent 3px, rgba(0,0,0,0.06) 3px, rgba(0,0,0,0.06) 4px);
-    pointer-events: none;
-    z-index: 9999;
+    padding: 40px 16px;
   }
   .window {
     width: 100%;
@@ -47,77 +38,73 @@
     border: 1px solid var(--border);
     border-radius: 10px;
     overflow: hidden;
-    box-shadow: 0 12px 56px rgba(0,0,0,0.75);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    background: var(--bg);
   }
   .titlebar {
     background: #21262d;
     border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
-    padding: 9px 14px;
-    gap: 8px;
+    padding: 10px 15px;
+    gap: 12px;
   }
-  .dots { display: flex; gap: 7px; }
+  .dots { display: flex; gap: 8px; }
   .dot { width: 12px; height: 12px; border-radius: 50%; }
   .dot-r { background: #ff5f57; }
   .dot-y { background: #febc2e; }
   .dot-g { background: #28c840; }
-  .tlabel { flex: 1; text-align: center; color: var(--output); font-size: 14px; }
+  .tlabel { flex: 1; text-align: center; color: var(--output); font-size: 14px; opacity: 0.8; }
   
-  .lang-switch { display: flex; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
-  .lang-btn { font-family: 'VT323', monospace; font-size: 14px; padding: 2px 9px; cursor: pointer; background: transparent; border: none; color: var(--dim); }
-  .lang-btn.active { background: var(--orange); color: #0d1117; }
-
-  .term { background: var(--bg); padding: 22px 26px 32px; }
+  .term { padding: 30px; }
   
-  /* Ajuste de la foto para que no se aplaste */
-  .header-row { display: flex; align-items: center; gap: 24px; margin-bottom: 28px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+  /* Ajuste de Foto Pixel Art */
+  .header-row { display: flex; align-items: center; gap: 25px; margin-bottom: 30px; padding-bottom: 25px; border-bottom: 1px solid var(--border); }
   .avatar-wrap { 
-    width: 120px; 
-    height: 120px; 
+    width: 110px; 
+    height: 110px; 
     flex-shrink: 0;
     border: 1px solid var(--border);
-    border-radius: 4px;
-    overflow: hidden;
+    background: var(--surface);
   }
   .avatar-wrap img { 
     width: 100%; 
     height: 100%; 
-    object-fit: cover; /* Mantiene la proporción sin aplastar */
+    object-fit: contain; /* Evita que se aplaste */
     image-rendering: pixelated; 
   }
 
-  .hname { font-size: 38px; color: var(--cmd); line-height: 1; }
-  .htitle { font-size: 20px; color: var(--green); margin-top: 4px; }
-  .hloc { font-size: 17px; color: var(--output); margin-top: 4px; }
+  .hname { font-size: 40px; color: var(--cmd); line-height: 1; }
+  .htitle { font-size: 22px; color: var(--green); margin-top: 5px; }
+  .hloc { font-size: 18px; color: var(--output); }
 
-  .pline { display: flex; align-items: center; gap: 9px; margin-bottom: 5px; opacity: 0; transition: opacity 0.1s; }
+  /* Animación Terminal */
+  .pline { display: flex; gap: 10px; margin-bottom: 4px; opacity: 0; }
   .pline.show { opacity: 1; }
-  .ps1 { color: var(--prompt); font-size: 19px; }
-  .pcmd { color: var(--cmd); font-size: 19px; }
-  .cur { display: inline-block; width: 10px; height: 19px; background: var(--cmd); animation: blink 1s step-start infinite; }
-  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+  .ps1 { color: var(--prompt); }
+  .cur { display: inline-block; width: 10px; height: 18px; background: var(--cmd); animation: blink 1s infinite; vertical-align: middle; }
+  @keyframes blink { 50% { opacity: 0; } }
 
-  .oblock { margin-bottom: 18px; opacity: 0; transition: opacity 0.25s; }
-  .oblock.show { opacity: 1; }
-  .oline { color: var(--output); font-size: 17px; line-height: 1.6; }
-  .oline.w { color: var(--cmd); }
-  .oline.g { color: var(--green); }
-
-  .pbox { border: 1px solid var(--border); border-left: 3px solid var(--orange); background: var(--surface); padding: 14px; margin: 8px 0; border-radius: 0 4px 4px 0; opacity: 0; transition: 0.3s; }
-  .pbox.show { opacity: 1; }
+  .oblock { margin-bottom: 20px; color: var(--output); }
+  .pbox { 
+    background: var(--surface); 
+    border: 1px solid var(--border); 
+    border-left: 4px solid var(--orange);
+    padding: 15px; 
+    margin: 10px 0 20px;
+    border-radius: 0 4px 4px 0;
+  }
   .ptitle { color: var(--orange); font-size: 20px; font-weight: bold; }
-  .prole { color: var(--yellow); font-size: 16px; margin-bottom: 6px; }
-  .ptags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
-  .tag { background: rgba(88,166,255,0.1); border: 1px solid rgba(88,166,255,0.3); color: var(--blue); font-size: 14px; padding: 2px 8px; border-radius: 3px; }
+  .prole { color: var(--yellow); font-size: 17px; margin-bottom: 8px; }
+  .tag { display: inline-block; background: rgba(88,166,255,0.1); color: var(--blue); border: 1px solid var(--blue); padding: 0 8px; font-size: 14px; border-radius: 3px; margin-right: 5px; margin-top: 5px; }
   
-  .clinks a { color: var(--blue); text-decoration: none; font-size: 18px; display: block; margin-bottom: 4px; }
-  .clinks a::before { content: "→ "; color: var(--dim); }
+  .links-row { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 10px; }
+  .links-row a { color: var(--blue); text-decoration: none; }
+  .links-row a:hover { text-decoration: underline; }
+  .links-row a::before { content: "→ "; color: var(--dim); }
 
-  .dl-btn { display: inline-block; background: rgba(240,136,62,0.15); border: 1px solid var(--orange); color: var(--orange); padding: 4px 12px; border-radius: 4px; text-decoration: none; margin-top: 8px; }
-  .dl-btn:hover { background: var(--orange); color: #000; }
-
-  @media (max-width: 600px) { .header-row { flex-direction: column; text-align: center; } }
+  .dl-btn { display: inline-block; border: 1px solid var(--orange); color: var(--orange); padding: 5px 15px; text-decoration: none; border-radius: 4px; margin-top: 10px; }
+  .dl-btn:hover { background: var(--orange); color: var(--bg); }
 </style>
 </head>
 <body>
@@ -125,150 +112,105 @@
 <div class="window">
   <div class="titlebar">
     <div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
-    <div class="tlabel">amendez83/resume — bash</div>
-    <div class="lang-switch">
-      <button class="lang-btn active" id="btn-en" onclick="setLang('en')">ENG</button>
-      <button class="lang-btn" id="btn-es" onclick="setLang('es')">ESP</button>
-    </div>
+    <div class="tlabel">amendez83 — bash — 80x24</div>
   </div>
   <div class="term">
     <div class="header-row">
       <div class="avatar-wrap">
-        <img src="https://amendez83.github.io/resume/CV/Captura%20de%20pantalla%202026-04-07%20a%20las%2010.59.09.jpg" alt="Álex Méndez">
+        <img src="Captura de pantalla 2026-04-07 a las 10.59.09.jpg" alt="Álex Méndez">
       </div>
-      <div class="htext">
-        <div class="hname" id="hname"></div>
-        <div class="htitle" id="htitle"></div>
-        <div class="hloc" id="hloc"></div>
+      <div>
+        <div class="hname">ÁLEX MÉNDEZ</div>
+        <div class="htitle">Product Designer · Design Engineer</div>
+        <div class="hloc">Madrid, Spain</div>
       </div>
     </div>
-    <div id="term-content"></div>
+    <div id="console"></div>
   </div>
 </div>
 
 <script>
-const DATA = {
-  en: {
-    title: "Product Designer \xb7 Design Engineer",
-    location: "Madrid, Spain",
-    about: [
-      "Senior Product Designer with 12+ years shipping enterprise SaaS",
-      "in high-stakes fintech. Deep expertise in design systems \u2014",
-      "token architecture, component libraries, design-to-code delivery.",
-      "Growing toward Design Engineering: HTML/CSS, Style Dictionary,",
-      "WCAG 2.1 AA. AI-augmented workflows: Supabase, Claude, GitHub."
-    ],
-    work: [
-      { id: "ria", title: "Ria Money Transfer \xb7 Euronet", role: "Lead Product Designer (2022\u2013Present)", desc: "Led end-to-end product design for Ria\u2019s internal B2B SaaS platform used by agents in 160+ countries. Built the design token architecture in Figma and established WCAG 2.1 AA standards.", tags: ["Design Systems", "Figma", "Tokens Studio", "WCAG 2.1 AA"] },
-      { id: "openbank", title: "Openbank \xb7 Santander Group", role: "Design System Specialist (2020\u20132022)", desc: "Designed the 3-layer token architecture and 60+ components for Spain's largest digital bank. Achieved 1:1 design-to-code parity with React squads.", tags: ["Style Dictionary", "React", "UI Analytics"] },
-      { id: "globant", title: "Globant", role: "Senior UI Designer (2016\u20132020)", desc: "Optimised UIs for mobile apps and enterprise dashboards. Led discovery workshops and high-fidelity prototyping for engineering teams.", tags: ["Product Design", "Mobile", "Prototyping"] }
-    ],
-    cv_label: "2-page PDF \u2014 Product Designer & Design Engineer",
-    cv_text: "↓ Download CV"
+const content = [
+  { cmd: "whoami", out: "ÁLEX MÉNDEZ\nProduct Designer · Design Engineer\nMadrid, Spain" },
+  { cmd: "cat about.txt", out: "Senior Product Designer with 12+ years shipping enterprise SaaS\nin high-stakes fintech. Deep expertise in design systems —\ntoken architecture, component libraries, design-to-code delivery.\nGrowing toward Design Engineering: HTML/CSS, Style Dictionary,\nWCAG 2.1 AA. AI-augmented workflows: Supabase, Claude, GitHub." },
+  { cmd: "ls work/", isWork: true },
+  { cmd: "ls downloads/", isDL: true },
+  { cmd: "cat contact.txt", isContact: true }
+];
+
+const workData = [
+  {
+    title: "Ria Money Transfer · Euronet",
+    role: "Lead Product Designer (2022–Present)",
+    desc: "Led end-to-end product design for Ria’s internal B2B SaaS platform used by thousands of agents in 160+ countries. Built the token architecture and established WCAG 2.1 AA standards.",
+    tags: ["Design Systems", "Figma", "Tokens Studio", "B2B SaaS"]
   },
-  es: {
-    title: "Diseñador de Producto \xb7 Design Engineer",
-    location: "Madrid, España",
-    about: [
-      "Diseñador de Producto Senior con +12 años lanzando SaaS",
-      "enterprise en fintech de alto impacto. Experto en sistemas de",
-      "diseño: tokens, librerías de componentes, entrega diseño-código.",
-      "Creciendo hacia Design Engineering: HTML/CSS, Style Dictionary,",
-      "WCAG 2.1 AA. Flujos aumentados con IA: Supabase, Claude, GitHub."
-    ],
-    work: [
-      { id: "ria", title: "Ria Money Transfer \xb7 Euronet", role: "Lead Product Designer (2022\u2013Presente)", desc: "Lideré el diseño end-to-end de la plataforma B2B SaaS usada en 160+ países. Construí la arquitectura de tokens en Figma y el primer estándar WCAG 2.1 AA.", tags: ["Sistemas de Diseño", "Figma", "Tokens Studio", "Accesibilidad"] },
-      { id: "openbank", title: "Openbank \xb7 Grupo Santander", role: "Especialista en Design System (2020\u20132022)", desc: "Diseñé el sistema de tokens de 3 capas para el mayor banco digital de España. Logré paridad 1:1 diseño-código con equipos de React.", tags: ["Style Dictionary", "React", "Gobernanza"] },
-      { id: "globant", title: "Globant", role: "Senior UI Designer (2016\u20132020)", desc: "Optimización de interfaces para apps móviles y dashboards enterprise. Lideré workshops de discovery y prototipado de alta fidelidad.", tags: ["Diseño de Producto", "Móvil", "Prototipado"] }
-    ],
-    cv_label: "PDF 2 páginas \u2014 Diseñador de Producto & Design Engineer",
-    cv_text: "↓ Descargar CV"
+  {
+    title: "Openbank · Santander Group",
+    role: "Design System Specialist (2020–2022)",
+    desc: "Designed and maintained the end-to-end design system for Spain’s largest digital bank. Achieved 1:1 design-to-code parity with React squads.",
+    tags: ["Style Dictionary", "React", "Governance", "UI Analytics"]
+  },
+  {
+    title: "Globant",
+    role: "Senior UI Designer (2016–2020)",
+    desc: "Designed and optimised UIs for mobile apps and enterprise dashboards. Led discovery workshops and high-fidelity prototypes.",
+    tags: ["Product Design", "Mobile", "Enterprise", "Prototyping"]
   }
-};
+];
 
-let currentLang = 'en';
-const container = document.getElementById("term-content");
+const consoleEl = document.getElementById("console");
+const wait = ms => new Promise(r => setTimeout(r, ms));
 
-const wait = ms => new Promise(res => setTimeout(res, ms));
-
-async function typeInto(el, text, speed = 30) {
-  for (let char of text) { el.textContent += char; await wait(speed); }
-}
-
-function makePrompt(cmdText) {
-  const line = document.createElement("div"); line.className = "pline show";
-  line.innerHTML = `<span class="ps1">❯</span> <span class="pcmd"></span><span class="cur"></span>`;
-  container.appendChild(line);
-  return line.querySelector(".pcmd");
+async function type(text, el) {
+  for (const char of text) {
+    el.textContent += char;
+    await wait(Math.random() * 30 + 20);
+  }
 }
 
 async function run() {
-  container.innerHTML = "";
-  const d = DATA[currentLang];
+  for (const item of content) {
+    const line = document.createElement("div");
+    line.className = "pline show";
+    line.innerHTML = `<span class="ps1">❯</span> <span class="cmd-text"></span><span class="cur"></span>`;
+    consoleEl.appendChild(line);
+    
+    await type(item.cmd, line.querySelector(".cmd-text"));
+    line.querySelector(".cur").remove();
+    await wait(300);
 
-  // whoami
-  const c1 = makePrompt(); await typeInto(c1, "whoami");
-  const o1 = document.createElement("div"); o1.className = "oblock show";
-  o1.innerHTML = `<div class="oline w">ÁLEX MÉNDEZ</div><div class="oline g">${d.title}</div><div class="oline">${d.location}</div>`;
-  container.appendChild(o1);
-  await wait(500);
-
-  // about
-  const c2 = makePrompt(); await typeInto(c2, "cat about.txt");
-  const o2 = document.createElement("div"); o2.className = "oblock show";
-  d.about.forEach(l => o2.innerHTML += `<div class="oline">${l}</div>`);
-  container.appendChild(o2);
-  await wait(500);
-
-  // work
-  const c3 = makePrompt(); await typeInto(c3, "ls work/");
-  d.work.forEach(p => {
-    const box = document.createElement("div"); box.className = "pbox show";
-    box.innerHTML = `<div class="ptitle">${p.title}</div><div class="prole">${p.role}</div><div class="oline">${p.desc}</div><div class="ptags">${p.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>`;
-    container.appendChild(box);
-  });
-  await wait(500);
-
-  // downloads
-  const c4 = makePrompt(); await typeInto(c4, "ls downloads/");
-  const o4 = document.createElement("div"); o4.className = "oblock show";
-  o4.innerHTML = `<div class="oline">${d.cv_label}</div><a href="#" class="dl-btn">${d.cv_text}</a>`;
-  container.appendChild(o4);
-  await wait(500);
-
-  // contact
-  const c5 = makePrompt(); await typeInto(c5, "cat contact.txt");
-  const o5 = document.createElement("div"); o5.className = "oblock show clinks";
-  o5.innerHTML = `
-    <a href="https://linkedin.com/in/amendez83" target="_blank">linkedin.com/in/amendez83</a>
-    <a href="https://behance.net/amendez" target="_blank">behance.net/amendez</a>
-    <a href="mailto:amendez83@gmail.com">amendez83@gmail.com</a>
-  `;
-  container.appendChild(o5);
+    const out = document.createElement("div");
+    out.className = "oblock";
+    
+    if (item.out) {
+      out.innerText = item.out;
+    } else if (item.isWork) {
+      workData.forEach(w => {
+        out.innerHTML += `<div class="pbox">
+          <div class="ptitle">${w.title}</div>
+          <div class="prole">${w.role}</div>
+          <div>${w.desc}</div>
+          <div>${w.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+        </div>`;
+      });
+    } else if (item.isDL) {
+      out.innerHTML = `<div>2-page PDF — Product Designer & Design Engineer</div>
+                       <a href="CV_Alex_Mendez.pdf" class="dl-btn">↓ Download CV</a>`;
+    } else if (item.isContact) {
+      out.innerHTML = `<div class="links-row">
+        <a href="https://linkedin.com/in/amendez83" target="_blank">LinkedIn</a>
+        <a href="https://behance.net/amendez" target="_blank">Behance</a>
+        <a href="mailto:amendez83@gmail.com">Email</a>
+      </div>`;
+    }
+    
+    consoleEl.appendChild(out);
+    await wait(500);
+  }
 }
 
-function setLang(lang) {
-  currentLang = lang;
-  document.getElementById("btn-en").className = lang==='en'?'lang-btn active':'lang-btn';
-  document.getElementById("btn-es").className = lang==='es'?'lang-btn active':'lang-btn';
-  
-  // Reset header
-  document.getElementById("hname").textContent = "";
-  document.getElementById("htitle").textContent = "";
-  document.getElementById("hloc").textContent = "";
-  
-  initHeader();
-}
-
-async function initHeader() {
-  await typeInto(document.getElementById("hname"), "ÁLEX MÉNDEZ");
-  await typeInto(document.getElementById("htitle"), DATA[currentLang].title);
-  await typeInto(document.getElementById("hloc"), DATA[currentLang].location);
-  run();
-}
-
-window.onload = initHeader;
+run();
 </script>
-
 </body>
 </html>
