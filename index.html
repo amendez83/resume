@@ -65,7 +65,6 @@
 
   .term { padding: 25px 30px 35px; }
 
-  /* Header con foto corregida */
   .header-row {
     display: flex;
     align-items: center;
@@ -85,7 +84,7 @@
   .avatar-wrap img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Para que no se aplaste */
+    object-fit: cover;
     image-rendering: pixelated;
   }
 
@@ -93,7 +92,6 @@
   .htitle { font-size: 22px; color: var(--green); margin-top: 2px; }
   .hloc { font-size: 18px; color: var(--output); margin-top: 4px; }
 
-  /* Terminal animations */
   .pline { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; opacity: 0; transition: opacity 0.1s; }
   .pline.show { opacity: 1; }
   .ps1 { color: var(--prompt); font-size: 20px; font-weight: bold; }
@@ -125,7 +123,7 @@
   .clinks a:hover { text-decoration: underline; }
   .clinks a::before { content: "-> "; color: var(--dim); }
 
-  .dl-btn { display: inline-block; background: rgba(240,136,62,0.1); border: 1px solid var(--orange); color: var(--orange); padding: 5px 15px; border-radius: 4px; text-decoration: none; margin-top: 10px; }
+  .dl-btn { display: inline-block; background: rgba(240,136,62,0.1); border: 1px solid var(--orange); color: var(--orange); padding: 5px 15px; border-radius: 4px; text-decoration: none; margin-top: 10px; transition: 0.2s; }
   .dl-btn:hover { background: var(--orange); color: #000; }
 
   @media (max-width: 600px) {
@@ -194,18 +192,15 @@ async function runCmd(text, outputCallback) {
 }
 
 async function init() {
-  // Header animation
   await typeInto(document.getElementById("hname"), "ÁLEX MÉNDEZ");
   await typeInto(document.getElementById("htitle"), "Product Designer · Design Engineer");
   await typeInto(document.getElementById("hloc"), "Madrid, Spain");
   await wait(400);
 
-  // whoami
   await runCmd("whoami", (o) => {
     o.innerHTML = `<div class="oline w">ÁLEX MÉNDEZ</div><div class="oline g">Product Designer · Design Engineer</div><div class="oline">Madrid, Spain</div>`;
   });
 
-  // about
   await runCmd("cat about.txt", (o) => {
     o.innerHTML = `
       <div class="oline">Senior Product Designer with 12+ years shipping enterprise SaaS</div>
@@ -215,7 +210,6 @@ async function init() {
       <div class="oline">WCAG 2.1 AA. AI-augmented workflows: Supabase, Claude, GitHub.</div>`;
   });
 
-  // work
   await runCmd("ls work/", (o) => {
     const projects = [
       { t: "Ria Money Transfer · Euronet", r: "Lead Product Designer (2022–Present)", d: "Led end-to-end product design for Ria's internal B2B SaaS platform used by agents in 160+ countries.", tags: ["Design Systems", "Figma", "WCAG 2.1 AA"] },
@@ -233,14 +227,12 @@ async function init() {
     });
   });
 
-  // downloads
   await runCmd("ls downloads/", (o) => {
     o.innerHTML = `
       <div class="oline">2-page PDF — Product Designer & Design Engineer</div>
-      <a href="CV_Alex_Mendez.pdf" class="dl-btn">↓ Download CV</a>`;
+      <a href="CV.pdf" download="CV_Alex_Mendez.pdf" class="dl-btn">↓ Download CV</a>`;
   });
 
-  // contact
   await runCmd("cat contact.txt", (o) => {
     o.innerHTML = `
       <div class="clinks">
@@ -250,7 +242,6 @@ async function init() {
       </div>`;
   });
 
-  // Final cursor
   const last = makePromptLine();
   last.line.classList.add("show");
 }
