@@ -3,13 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>amendez.me — bash — 80×24</title>
+<title>Álex Méndez — Product Designer & Design Engineer</title>
 <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
   :root {
-    --bg:      #0d1117; /* GitHub Dark */
+    --bg:      #0d1117;
     --surface: #161b22;
     --border:  #30363d;
     --prompt:  #f78166;
@@ -21,178 +20,107 @@
     --orange:  #f0883e;
     --dim:     #484f58;
   }
-
   body {
     background: var(--bg);
     color: var(--cmd);
     font-family: 'VT323', monospace;
-    font-size: 18px;
+    font-size: 17px;
     line-height: 1.5;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 30px 15px;
-    position: relative;
+    padding: 28px 16px 72px;
   }
-
-  /* CRT scanlines effect */
   body::before {
     content: '';
     position: fixed;
     inset: 0;
-    background: repeating-linear-gradient(
-      to bottom,
-      transparent 0px, transparent 2px,
-      rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 3px
-    );
+    background: repeating-linear-gradient(to bottom, transparent 0px, transparent 3px, rgba(0,0,0,0.06) 3px, rgba(0,0,0,0.06) 4px);
     pointer-events: none;
     z-index: 9999;
   }
-
   .window {
     width: 100%;
-    max-width: 820px;
-    background: var(--bg);
+    max-width: 860px;
     border: 1px solid var(--border);
-    border-radius: 12px;
+    border-radius: 10px;
     overflow: hidden;
-    box-shadow: 0 20px 70px rgba(0,0,0,0.7);
+    box-shadow: 0 12px 56px rgba(0,0,0,0.75);
   }
-
   .titlebar {
-    background: #161b22;
+    background: #21262d;
     border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
-    padding: 12px 16px;
-    gap: 9px;
+    padding: 9px 14px;
+    gap: 8px;
     user-select: none;
   }
-  .dot { width: 13px; height: 13px; border-radius: 50%; flex-shrink: 0; }
+  .dots { display: flex; gap: 7px; flex-shrink: 0; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
   .dot-r { background: #ff5f57; }
   .dot-y { background: #febc2e; }
   .dot-g { background: #28c840; }
-  .tlabel {
-    flex: 1; text-align: center;
-    color: var(--output); font-size: 16px; letter-spacing: 0.5px;
-    padding-right: 25px; /* balance dots */
-  }
+  .tlabel { flex: 1; text-align: center; color: var(--output); font-size: 14px; letter-spacing: 0.4px; }
+  
+  .lang-switch { display: flex; align-items: center; gap: 1px; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
+  .lang-btn { font-family: 'VT323', monospace; font-size: 14px; padding: 2px 9px; cursor: pointer; background: transparent; border: none; color: var(--dim); }
+  .lang-btn.active { background: var(--orange); color: #0d1117; }
+  
+  .term { background: var(--bg); padding: 22px 26px 32px; }
+  .header-row { display: flex; align-items: center; gap: 28px; margin-bottom: 28px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+  
+  canvas#av { image-rendering: pixelated; flex-shrink: 0; display: block; }
+  
+  .htext { padding-top: 2px; }
+  .hname  { font-size: 38px; color: var(--cmd); letter-spacing: 1px; line-height: 1; min-height: 40px; }
+  .htitle { font-size: 20px; color: var(--green); margin-top: 4px; min-height: 22px; }
+  .hloc   { font-size: 17px; color: var(--output); margin-top: 5px; min-height: 18px; }
 
-  .term { padding: 25px 30px 35px; }
-
-  /* New Header Layout */
-  .header-row {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 30px;
-    margin-bottom: 30px;
-    padding-bottom: 25px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  canvas#av {
-    image-rendering: pixelated;
-    image-rendering: crisp-edges;
-    flex-shrink: 0;
-    /* Clean look: no border, just the art on background */
-    display: block;
-  }
-
-  .htext { display: flex; flex-direction: column; justify-content: center; }
-  .hname  { font-size: 42px; color: var(--cmd); letter-spacing: 1px; line-height: 1; min-height: 45px; }
-  .htitle { font-size: 22px; color: var(--green); margin-top: 2px; min-height: 24px; }
-  .hloc   { font-size: 18px; color: var(--output); margin-top: 4px; min-height: 20px; }
-
-  /* Responsive Header */
-  @media (max-width: 600px) {
-    .header-row { flex-direction: column; gap: 15px; text-align: center; }
-    .htext { align-items: center; }
-  }
-
-  /* Terminal content styles */
-  .pline {
-    display: flex; align-items: center; gap: 10px;
-    margin-bottom: 6px; opacity: 0; transition: opacity 0.1s;
-  }
+  /* Terminal lines */
+  .pline { display: flex; align-items: center; gap: 9px; margin-bottom: 5px; opacity: 0; transition: opacity 0.1s; }
   .pline.show { opacity: 1; }
-  .ps1  { color: var(--prompt); font-size: 20px; font-weight: bold; }
-  .pcmd { color: var(--cmd);    font-size: 20px; }
-
-  .cur {
-    display: inline-block; width: 10px; height: 20px;
-    background: var(--cmd); vertical-align: middle;
-    animation: blink 1s step-start infinite;
-    margin-left: 2px;
-  }
+  .ps1 { color: var(--prompt); font-size: 19px; }
+  .pcmd { color: var(--cmd); font-size: 19px; }
+  .cur { display: inline-block; width: 10px; height: 19px; background: var(--cmd); vertical-align: middle; animation: blink 1s step-start infinite; }
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
-
-  .oblock {
-    padding-left: 0; margin-bottom: 22px;
-    opacity: 0; transform: translateY(5px);
-    transition: opacity 0.25s, transform 0.25s;
-  }
+  .oblock { margin-bottom: 18px; opacity: 0; transform: translateY(4px); transition: opacity 0.25s, transform 0.25s; }
   .oblock.show { opacity: 1; transform: none; }
-
-  .oline   { color: var(--output); font-size: 18px; line-height: 1.6; }
-  .oline.w { color: var(--cmd); font-weight: bold; }
+  .oline { color: var(--output); font-size: 17px; line-height: 1.6; }
+  .oline.w { color: var(--cmd); }
   .oline.g { color: var(--green); }
-  .oline.b { color: var(--blue); }
-  .oline.o { color: var(--orange); }
-  .oline.y { color: var(--yellow); }
-
-  .dirlist { display: flex; flex-wrap: wrap; gap: 8px 30px; margin-top: 4px; }
-  .ditem { color: var(--blue); font-size: 18px; }
-  .ditem::before { content: "d "; color: var(--dim); }
-
-  .pbox {
-    border: 1px solid var(--border);
-    border-left: 4px solid var(--orange);
-    background: var(--surface);
-    padding: 15px 20px; margin: 5px 0 18px;
-    border-radius: 4px;
-    opacity: 0; transform: translateY(5px);
-    transition: opacity 0.3s, transform 0.3s;
-  }
+  .pbox { border: 1px solid var(--border); border-left: 3px solid var(--orange); background: var(--surface); padding: 12px 16px; margin: 8px 0; border-radius: 0 4px 4px 0; opacity: 0; transform: translateY(4px); transition: opacity 0.3s, transform 0.3s; }
   .pbox.show { opacity: 1; transform: none; }
-  .ptitle { color: var(--orange); font-size: 22px; margin-bottom: 4px; font-weight: bold; }
-  .prole  { color: var(--yellow); font-size: 17px; margin-bottom: 8px; }
-  .pdesc  { color: var(--output); font-size: 17px; line-height: 1.6; margin-bottom: 10px; }
-  .ptags  { display: flex; flex-wrap: wrap; gap: 6px; }
-  .tag {
-    background: rgba(88,166,255,0.1);
-    border: 1px solid rgba(88,166,255,0.2);
-    color: var(--blue); font-size: 15px;
-    padding: 2px 10px; border-radius: 4px;
+  .ptitle { color: var(--orange); font-size: 19px; font-weight: bold; }
+  .prole { color: var(--yellow); font-size: 16px; margin-bottom: 4px; }
+  .ptags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+  .tag { background: rgba(88,166,255,0.1); border: 1px solid rgba(88,166,255,0.28); color: var(--blue); font-size: 13px; padding: 1px 7px; border-radius: 3px; }
+  .clinks a { color: var(--blue); text-decoration: none; font-size: 17px; }
+  .clinks a::before { content: "→ "; color: var(--dim); }
+
+  @media (max-width: 600px) {
+    .header-row { flex-direction: column; text-align: center; }
   }
-
-  .clinks { display: flex; flex-wrap: wrap; gap: 8px 30px; margin-top: 5px; }
-  .clinks a { color: var(--blue); text-decoration: none; font-size: 18px; transition: color 0.15s; }
-  .clinks a:hover { color: var(--cmd); text-decoration: underline; }
-  .clinks a::before { content: "-> "; color: var(--dim); }
-
-  .fprompt { display: flex; align-items: center; gap: 10px; margin-top: 15px; opacity: 0; transition: opacity 0.3s; }
-  .fprompt.show { opacity: 1; }
-
 </style>
 </head>
 <body>
-
 <div class="window">
   <div class="titlebar">
-    <div class="dot dot-r"></div>
-    <div class="dot dot-y"></div>
-    <div class="dot dot-g"></div>
-    <div class="tlabel">amendez.me &mdash; bash &mdash; 80&times;24</div>
+    <div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+    <div class="tlabel">amendez83/resume &mdash; bash</div>
+    <div class="lang-switch">
+      <button class="lang-btn active" id="btn-en" onclick="setLang('en')">ENG</button>
+      <button class="lang-btn" id="btn-es" onclick="setLang('es')">ESP</button>
+    </div>
   </div>
   <div class="term">
     <div class="header-row">
       <canvas id="av"></canvas>
       <div class="htext">
-        <div class="hname"  id="hname"></div>
+        <div class="hname" id="hname"></div>
         <div class="htitle" id="htitle"></div>
-        <div class="hloc"   id="hloc"></div>
+        <div class="hloc" id="hloc"></div>
       </div>
     </div>
     <div id="term"></div>
@@ -202,292 +130,96 @@
 <script>
 "use strict";
 
-// ── PIXEL ART AVATAR (Updated to match image_15.png) ─────────────────────
+// ── PIXEL ART GENERATOR ───────────────────────────────────────────────────
 (function() {
-  // Scaling and grid setup (16x20 base grid)
   var S = 7, W = 16, H = 20;
-
-  // Color Palette from new profile picture
-  var T  = "T";       // transparent
-  var GH = "#3c584c"; // Green-grey hair
-  var SK = "#eead88"; // Peach skin
-  var S2 = "#cd8b66"; // Skin shadow
-  var GR = "#a0ffe0"; // Lighter Green glasses frame
-  var GL = "#1a1a1a"; // Glasses frame dark lines
-  var EY = "#ffffff"; // Eyes
-  var PU = "#333333"; // Pupils
-  var BD = "#3c584c"; // Beard (matches hair color)
-  var WT = "#f0f8ff"; // White tee shirt
-  var WS = "#d0d8df"; // Shirt shadows
-  var LG = "#405058"; // Dark logo color
-
-  // Grid Data (16 columns × 20 rows)
+  var T="T", GH="#3c584c", SK="#eead88", S2="#cd8b66", GR="#a0ffe0", GL="#1a1a1a", EY="#ffffff", PU="#333333", BD="#3c584c", WT="#f0f8ff", WS="#d0d8df", LG="#405058";
   var g = [
-    // row 0 — top hair
-    [T,  T,  T,  GH, GH, GH, GH, GH, GH, GH, GH, GH, T,  T,  T,  T ],
-    // row 1 — hair
-    [T,  T,  GH, GH, GH, GH, GH, GH, GH, GH, GH, GH, GH, T,  T,  T ],
-    // row 2 — hair
-    [T,  GH, GH, GH, GH, GH, GH, GH, GH, GH, GH, GH, GH, GH, T,  T ],
-    // row 3 — full hair width
-    [GH, GH, GH, GH, GH, GH, GH, GH, GH, GH, GH, GH, GH, GH, GH, T ],
-    // row 4 — hairline / forehead
-    [GH, GH, GH, SK, SK, SK, SK, SK, SK, SK, SK, SK, GH, GH, GH, T ],
-    // row 5 — forehead
-    [T,  GH, SK, SK, SK, SK, SK, SK, SK, SK, SK, SK, SK, GH, T,  T ],
-    // row 6 — eyebrows
-    [T,  GH, SK, GL, GL, SK, SK, SK, SK, SK, GL, GL, SK, GH, T,  T ],
-    // row 7 — glasses top frame
-    [T,  SK, GR, GR, GR, GR, SK, SK, SK, GR, GR, GR, GR, SK, T,  T ],
-    // row 8 — eyes / lenses
-    [T,  SK, GR, EY, PU, GR, SK, SK, SK, GR, EY, PU, GR, SK, T,  T ],
-    // row 9 — glasses bottom frame
-    [T,  SK, GR, GR, GR, GR, SK, SK, SK, GR, GR, GR, GR, SK, T,  T ],
-    // row 10 — cheeks / nose
-    [T,  S2, SK, SK, SK, SK, SK, SK, SK, SK, SK, SK, SK, S2, T,  T ],
-    // row 11 — cheeks beard start
-    [T,  BD, SK, SK, SK, SK, SK, SK, SK, SK, SK, SK, SK, BD, T,  T ],
-    // row 12 — mustache
-    [T,  BD, BD, BD, SK, BD, BD, BD, BD, BD, SK, BD, BD, BD, T,  T ],
-    // row 13 — full beard
-    [T,  BD, BD, BD, BD, BD, BD, BD, BD, BD, BD, BD, BD, BD, T,  T ],
-    // row 14 — beard full depth
-    [T,  T,  BD, BD, BD, BD, BD, BD, BD, BD, BD, BD, BD, T,  T,  T ],
-    // row 15 — beard narrow
-    [T,  T,  BD, BD, BD, BD, BD, BD, BD, BD, BD, BD, BD, T,  T,  T ],
-    // row 16 — beard tip
-    [T,  T,  T,  BD, BD, BD, BD, BD, BD, BD, BD, T,  T,  T,  T,  T ],
-    // row 17 — neck / shirt start
-    [T,  T,  T,  WT, WT, WS, WS, WS, WS, WS, WT, WT, T,  T,  T,  T ],
-    // row 18 — shirt shoulders / logo
-    [T,  WT, WT, WT, WT, WT, WT, WT, WT, LG, LG, WT, WT, WT, T,  T ],
-    // row 19 — full shirt body
-    [WT, WT, WT, WT, WT, WT, WT, WT, WT, WT, WT, WT, WT, WT, WT, WT]
+    [T,T,T,GH,GH,GH,GH,GH,GH,GH,GH,GH,T,T,T,T],[T,T,GH,GH,GH,GH,GH,GH,GH,GH,GH,GH,GH,T,T,T],[T,GH,GH,GH,GH,GH,GH,GH,GH,GH,GH,GH,GH,GH,T,T],[GH,GH,GH,GH,GH,GH,GH,GH,GH,GH,GH,GH,GH,GH,GH,T],[GH,GH,GH,SK,SK,SK,SK,SK,SK,SK,SK,SK,GH,GH,GH,T],[T,GH,SK,SK,SK,SK,SK,SK,SK,SK,SK,SK,SK,GH,T,T],[T,GH,SK,GL,GL,SK,SK,SK,SK,SK,GL,GL,SK,GH,T,T],[T,SK,GR,GR,GR,GR,SK,SK,SK,GR,GR,GR,GR,SK,T,T],[T,SK,GR,EY,PU,GR,SK,SK,SK,GR,EY,PU,GR,SK,T,T],[T,SK,GR,GR,GR,GR,SK,SK,SK,GR,GR,GR,GR,SK,T,T],[T,S2,SK,SK,SK,SK,SK,SK,SK,SK,SK,SK,SK,S2,T,T],[T,BD,SK,SK,SK,SK,SK,SK,SK,SK,SK,SK,SK,BD,T,T],[T,BD,BD,BD,SK,BD,BD,BD,BD,BD,SK,BD,BD,BD,T,T],[T,BD,BD,BD,BD,BD,BD,BD,BD,BD,BD,BD,BD,BD,T,T],[T,T,BD,BD,BD,BD,BD,BD,BD,BD,BD,BD,BD,T,T,T],[T,T,BD,BD,BD,BD,BD,BD,BD,BD,BD,BD,BD,T,T,T],[T,T,T,BD,BD,BD,BD,BD,BD,BD,BD,T,T,T,T,T],[T,T,T,WT,WT,WS,WS,WS,WS,WS,WT,WT,T,T,T,T],[T,WT,WT,WT,WT,WT,WT,WT,WT,LG,LG,WT,WT,WT,T,T],[WT,WT,WT,WT,WT,WT,WT,WT,WT,WT,WT,WT,WT,WT,WT,WT]
   ];
-
-  var cv = document.getElementById("av");
-  cv.width  = W * S;
-  cv.height = H * S;
+  var cv = document.getElementById("av"); cv.width = W*S; cv.height = H*S;
   var ctx = cv.getContext("2d");
-  ctx.imageSmoothingEnabled = false;
-
-  for (var r = 0; r < H; r++) {
-    for (var c = 0; c < W; c++) {
-      if (g[r][c] === "T") continue;
-      ctx.fillStyle = g[r][c];
-      ctx.fillRect(c * S, r * S, S, S);
-    }
-  }
+  for (var r=0; r<H; r++) { for (var c=0; c<W; c++) { if (g[r][c]!=="T") { ctx.fillStyle=g[r][c]; ctx.fillRect(c*S,r*S,S,S); } } }
 }());
 
-// ── DATA ──────────────────────────────────────────────────────────────────
-var PROFILE = [
-  "Senior Product Designer con +12 años lanzando SaaS empresariales",
-  "en fintech de alto riesgo. Experto en sistemas de diseño --",
-  "arquitectura de tokens, librerías de componentes, entrega design-to-code.",
-  "Evolucionando hacia Design Engineering: HTML/CSS, Style Dictionary,",
-  "WCAG 2.1 AA. Mentalidad de propiedad y trayectoria en convertir",
-  "la complejidad en sistemas escalables y centrados en el usuario."
-];
-
-var PROJECTS = [
-  {
-    file:  "work/ria-money-transfer/readme.md",
-    title: "Ria Money Transfer \xb7 Euronet",
-    role:  "Lead Product Designer  (2022\u2013Presente)",
-    desc:  "Lideré el diseño de producto end-to-end para la plataforma SaaS B2B interna de Ria, utilizada diariamente por miles de agentes en más de 160 países. Construí la librería de componentes y la arquitectura de design tokens como única fuente de verdad en Figma. Establecí WCAG 2.1 AA como el primer estándar de accesibilidad documentado en la historia de la plataforma.",
-    tags:  ["Design Systems", "Figma", "Tokens Studio", "WCAG 2.1 AA", "B2B SaaS"]
+// ── DATA & LOGIC ──────────────────────────────────────────────────────────
+var C = {
+  en: {
+    title: "Product Designer \xb7 Design Engineer",
+    location: "Madrid, Spain",
+    profile: ["Senior Product Designer with 12+ years shipping enterprise SaaS","in high-stakes fintech. Expert in design systems \u2014","token architecture, component libraries, design-to-code delivery."],
+    projects: [
+      {title: "Ria Money Transfer", role: "Lead Product Designer", tags: ["Design Systems", "WCAG 2.1 AA", "B2B SaaS"]},
+      {title: "Openbank \xb7 Santander", role: "Design System Specialist", tags: ["React", "Style Dictionary", "UI Analytics"]}
+    ]
   },
-  {
-    file:  "work/openbank-santander/readme.md",
-    title: "Openbank \xb7 Santander Group",
-    role:  "Design System Specialist + UI Analytics Sr. Analyst  (2020\u20132022)",
-    desc:  "Diseñé y mantuve el sistema de diseño end-to-end para el banco 100% digital más grande de España: arquitectura de tokens de 3 capas, +60 componentes de Figma documentados, gobernanza cross-team. Integrado en squads de React logrando paridad 1:1 design-to-code. Introduje UI analytics revelando que ~30% de los componentes tenían adopción casi nula.",
-    tags:  ["Design Systems", "Style Dictionary", "React", "Governance", "UI Analytics"]
-  },
-  {
-    file:  "work/globant/readme.md",
-    title: "Globant",
-    role:  "Senior UI Designer  (2016\u20132020)",
-    desc:  "Diseñé y optimicé UIs para productos digitales de alto impacto para múltiples clientes: apps móviles, dashboards empresariales y plataformas web. Lideré workshops de discovery, user flows end-to-end y prototipos de alta fidelidad para equipos de ingeniería distribuidos.",
-    tags:  ["Product Design", "Mobile", "Enterprise", "Prototyping"]
+  es: {
+    title: "Diseñador de Producto \xb7 Design Engineer",
+    location: "Madrid, España",
+    profile: ["Diseñador de Producto Senior con +12 años lanzando SaaS","enterprise en fintech. Experto en sistemas de diseño:","tokens, librerías de componentes, entrega diseño-código."],
+    projects: [
+      {title: "Ria Money Transfer", role: "Lead Product Designer", tags: ["Sistemas de Diseño", "WCAG 2.1 AA", "B2B SaaS"]},
+      {title: "Openbank \xb7 Santander", role: "Especialista en Design System", tags: ["React", "Style Dictionary", "Analítica UI"]}
+    ]
   }
-];
+};
 
-// Pre-filled email details
-var _emailSubject = "Conectemos \u2014 Acabo de visitar tu portfolio";
-var _emailBody = [
-  "Hola \xc1lex,",
-  "",
-  "Acabo de ver tu portfolio y tengo que decirte que la forma en que has",
-  "unido el design thinking con el craft de ingeniería es realmente impresionante.",
-  "Es raro encontrar a alguien que una ambos mundos con ese nivel de profundidad.",
-  "",
-  "Te escribo porque [cuéntale qué te ha traído aquí].",
-  "",
-  "Me encantaría conectar y explorar si hay un encaje.",
-  "",
-  "Un saludo,",
-  "[Tu nombre]"
-].join("\n");
+var currentLang = 'en';
+var termEl = document.getElementById("term");
 
-var CONTACTS = [
-  { label: "linkedin.com/in/amendez83", href: "https://linkedin.com/in/amendez83" },
-  { label: "behance.net/amendez",       href: "https://behance.net/amendez" },
-  {
-    label: "amendez83@gmail.com",
-    href:  "mailto:amendez83@gmail.com"
-           + "?subject=" + encodeURIComponent(_emailSubject)
-           + "&body="    + encodeURIComponent(_emailBody)
-  }
-];
-
-// ── HELPERS ───────────────────────────────────────────────────────────────
-var term = document.getElementById("term");
-
-function wait(ms) {
-  return new Promise(function(res){ setTimeout(res, ms); });
+function wait(ms) { return new Promise(res => setTimeout(res, ms)); }
+async function typeInto(el, text) {
+  for (let char of text) { el.textContent += char; await wait(30); }
 }
 
-function typeInto(el, text, base, variance) {
-  return new Promise(function(res) {
-    var i = 0;
-    function tick() {
-      if (i < text.length) {
-        el.textContent += text.charAt(i++);
-        setTimeout(tick, base + Math.random() * variance);
-      } else { res(); }
-    }
-    tick();
+async function runSequence(lang) {
+  termEl.innerHTML = "";
+  let d = C[lang];
+  
+  // Whoami
+  let p1 = makePrompt(); await typeInto(p1.cmd, "whoami");
+  let o1 = makeOblock(); addLine(o1, "ÁLEX MÉNDEZ", "w"); addLine(o1, d.title, "g"); addLine(o1, d.location);
+  
+  // About
+  let p2 = makePrompt(); await typeInto(p2.cmd, "cat about.txt");
+  let o2 = makeOblock(); d.profile.forEach(l => addLine(o2, l));
+  
+  // Projects
+  let p3 = makePrompt(); await typeInto(p3.cmd, "ls work/");
+  d.projects.forEach(p => {
+    let box = document.createElement("div"); box.className = "pbox show";
+    box.innerHTML = `<div class="ptitle">${p.title}</div><div class="prole">${p.role}</div><div class="ptags">${p.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>`;
+    termEl.appendChild(box);
   });
 }
 
-function makePromptLine() {
-  var line = document.createElement("div");
-  line.className = "pline";
-  var s = document.createElement("span"); s.className = "ps1"; s.textContent = "\u276f";
-  var c = document.createElement("span"); c.className = "pcmd";
-  var k = document.createElement("span"); k.className = "cur";
-  line.appendChild(s); line.appendChild(c); line.appendChild(k);
-  term.appendChild(line);
-  return { line: line, cmd: c, cur: k };
+function makePrompt() {
+  let div = document.createElement("div"); div.className = "pline show";
+  div.innerHTML = `<span class="ps1">❯</span> <span class="pcmd"></span><span class="cur"></span>`;
+  termEl.appendChild(div);
+  return { cmd: div.querySelector(".pcmd"), cur: div.querySelector(".cur") };
+}
+function makeOblock() { let div = document.createElement("div"); div.className = "oblock show"; termEl.appendChild(div); return div; }
+function addLine(cont, txt, cls) { let d = document.createElement("div"); d.className = "oline "+(cls||""); d.textContent = txt; cont.appendChild(d); }
+
+function setLang(lang) {
+  currentLang = lang;
+  document.getElementById("btn-en").className = lang==='en'?'lang-btn active':'lang-btn';
+  document.getElementById("btn-es").className = lang==='es'?'lang-btn active':'lang-btn';
+  document.getElementById("hname").textContent = "";
+  document.getElementById("htitle").textContent = "";
+  document.getElementById("hloc").textContent = "";
+  startHeader(lang);
 }
 
-function makeOblock() {
-  var d = document.createElement("div");
-  d.className = "oblock";
-  term.appendChild(d);
-  return d;
+async function startHeader(lang) {
+  await typeInto(document.getElementById("hname"), "ÁLEX MÉNDEZ");
+  await typeInto(document.getElementById("htitle"), C[lang].title);
+  await typeInto(document.getElementById("hloc"), C[lang].location);
+  runSequence(lang);
 }
 
-function addLine(container, text, cls) {
-  var div = document.createElement("div");
-  div.className = cls ? ("oline " + cls) : "oline";
-  div.textContent = text;
-  container.appendChild(div);
-}
-
-function show(el) {
-  requestAnimationFrame(function(){ el.classList.add("show"); });
-}
-
-async function typeCmd(text) {
-  var p = makePromptLine();
-  await wait(180);
-  p.line.classList.add("show");
-  await typeInto(p.cmd, text, 38, 22);
-  p.cur.remove();
-  await wait(160);
-}
-
-// ── SEQUENCE ─────────────────────────────────────────────────────────────
-async function runSequence() {
-  await wait(500);
-
-  // whoami
-  await typeCmd("whoami");
-  var w = makeOblock();
-  addLine(w, "\xc1LEX M\xc9NDEZ", "w");
-  addLine(w, "Product Designer  \xb7  Design Engineer", "g");
-  addLine(w, "Madrid, España \u2014 amendez.me");
-  show(w);
-  await wait(850);
-
-  // cat about.txt
-  await typeCmd("cat about.txt");
-  var ab = makeOblock();
-  PROFILE.forEach(function(l){ addLine(ab, l); });
-  show(ab);
-  await wait(850);
-
-  // ls work/
-  await typeCmd("ls work/");
-  var ls = makeOblock();
-  var dl = document.createElement("div"); dl.className = "dirlist";
-  PROJECTS.forEach(function(p){
-    var d = document.createElement("div"); d.className = "ditem";
-    d.textContent = p.file.split("/")[1];
-    dl.appendChild(d);
-  });
-  ls.appendChild(dl);
-  show(ls);
-  await wait(750);
-
-  // projects
-  for (var i = 0; i < PROJECTS.length; i++) {
-    var proj = PROJECTS[i];
-    await typeCmd("cat " + proj.file);
-
-    var box = document.createElement("div"); box.className = "pbox";
-    var pt = document.createElement("div"); pt.className = "ptitle"; pt.textContent = proj.title;
-    var pr = document.createElement("div"); pr.className = "prole";  pr.textContent = proj.role;
-    var pd = document.createElement("div"); pd.className = "pdesc";  pd.textContent = proj.desc;
-    var pg = document.createElement("div"); pg.className = "ptags";
-    proj.tags.forEach(function(t){
-      var tg = document.createElement("span"); tg.className = "tag"; tg.textContent = t;
-      pg.appendChild(tg);
-    });
-    box.appendChild(pt); box.appendChild(pr); box.appendChild(pd); box.appendChild(pg);
-    term.appendChild(box);
-    show(box);
-    await wait(750);
-  }
-
-  // cat contact.txt
-  await typeCmd("cat contact.txt");
-  var co = makeOblock();
-  var cl = document.createElement("div"); cl.className = "clinks";
-  CONTACTS.forEach(function(c){
-    var a = document.createElement("a");
-    a.href = c.href; a.textContent = c.label;
-    a.target = "_blank"; a.rel = "noopener noreferrer";
-    cl.appendChild(a);
-  });
-  co.appendChild(cl);
-  show(co);
-  await wait(600);
-
-  // final cursor
-  var fp = document.createElement("div"); fp.className = "fprompt";
-  var fs = document.createElement("span"); fs.className = "ps1"; fs.textContent = "\u276f";
-  var fc = document.createElement("span"); fc.className = "cur";
-  fp.appendChild(fs); fp.appendChild(fc);
-  term.appendChild(fp);
-  await wait(80);
-  fp.classList.add("show");
-}
-
-// ── HEADER TYPEWRITER ─────────────────────────────────────────────────────
-window.addEventListener("DOMContentLoaded", async function() {
-  await wait(250);
-  await typeInto(document.getElementById("hname"),  "\xc1LEX M\xc9NDEZ",                       28, 14);
-  await wait(100);
-  await typeInto(document.getElementById("htitle"), "Product Designer \xb7 Design Engineer", 22, 10);
-  await wait(80);
-  await typeInto(document.getElementById("hloc"),   "Madrid, España",                        24, 10);
-  await wait(280);
-  runSequence();
-});
+window.addEventListener("DOMContentLoaded", () => startHeader('en'));
 </script>
 </body>
 </html>
