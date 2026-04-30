@@ -88,15 +88,15 @@
     image-rendering: pixelated;
   }
 
-  .hname { font-size: 42px; color: var(--cmd); line-height: 1; }
+  .hname  { font-size: 42px; color: var(--cmd); line-height: 1; }
   .htitle { font-size: 22px; color: var(--green); margin-top: 2px; }
-  .hloc { font-size: 18px; color: var(--output); margin-top: 4px; }
+  .hloc   { font-size: 18px; color: var(--output); margin-top: 4px; }
 
   .pline { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; opacity: 0; transition: opacity 0.1s; }
   .pline.show { opacity: 1; }
-  .ps1 { color: var(--prompt); font-size: 20px; font-weight: bold; }
+  .ps1  { color: var(--prompt); font-size: 20px; font-weight: bold; }
   .pcmd { color: var(--cmd); font-size: 20px; }
-  .cur { display: inline-block; width: 10px; height: 20px; background: var(--cmd); animation: blink 1s step-start infinite; margin-left: 2px; }
+  .cur  { display: inline-block; width: 10px; height: 20px; background: var(--cmd); animation: blink 1s step-start infinite; margin-left: 2px; }
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
 
   .oblock { margin-bottom: 22px; opacity: 0; transform: translateY(5px); transition: opacity 0.25s, transform 0.25s; }
@@ -111,12 +111,43 @@
     background: var(--surface);
     padding: 15px 20px; margin: 10px 0 20px;
     border-radius: 4px;
-    opacity: 0; transform: translateY(5px); transition: 0.3s;
   }
-  .pbox.show { opacity: 1; transform: none; }
+  .pbox.nda { border-left-color: #f78166; }
   .ptitle { color: var(--orange); font-size: 22px; font-weight: bold; }
-  .prole { color: var(--yellow); font-size: 17px; margin-bottom: 8px; }
+  .pbox.nda .ptitle { color: #f78166; }
+  .prole  { color: var(--yellow); font-size: 17px; margin-bottom: 8px; }
   .tag { background: rgba(88,166,255,0.1); border: 1px solid rgba(88,166,255,0.2); color: var(--blue); font-size: 15px; padding: 2px 10px; border-radius: 4px; margin-right: 6px; display: inline-block; margin-top: 5px; }
+  .tag.nda-tag { background: rgba(247,129,102,0.1); border-color: rgba(247,129,102,0.3); color: #f78166; }
+
+  .portfolio-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+    margin-top: 10px;
+  }
+  .p-card {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    border-radius: 4px;
+    overflow: hidden;
+    text-decoration: none;
+    display: block;
+    transition: border-color 0.2s;
+  }
+  .p-card:hover { border-color: var(--blue); }
+  .p-card img {
+    width: 100%;
+    aspect-ratio: 16/9;
+    object-fit: cover;
+    display: block;
+    filter: grayscale(30%);
+    transition: filter 0.2s;
+  }
+  .p-card:hover img { filter: grayscale(0%); }
+  .p-card-info  { padding: 10px 12px; }
+  .p-card-title { color: var(--cmd); font-size: 17px; line-height: 1.3; }
+  .p-card-meta  { color: var(--dim); font-size: 14px; margin-top: 3px; }
+  .p-card-arrow { color: var(--blue); font-size: 14px; margin-top: 4px; }
 
   .clinks { display: flex; flex-wrap: wrap; gap: 8px 30px; margin-top: 5px; }
   .clinks a { color: var(--blue); text-decoration: none; font-size: 18px; }
@@ -128,6 +159,7 @@
 
   @media (max-width: 600px) {
     .header-row { flex-direction: column; text-align: center; }
+    .portfolio-grid { grid-template-columns: 1fr 1fr; }
   }
 </style>
 </head>
@@ -146,9 +178,9 @@
         <img src="fotoAlex.jpg" alt="Álex Méndez">
       </div>
       <div class="htext">
-        <div class="hname" id="hname"></div>
+        <div class="hname"  id="hname"></div>
         <div class="htitle" id="htitle"></div>
-        <div class="hloc" id="hloc"></div>
+        <div class="hloc"   id="hloc"></div>
       </div>
     </div>
     <div id="term"></div>
@@ -191,46 +223,101 @@ async function runCmd(text, outputCallback) {
   await wait(600);
 }
 
+const portfolioProjects = [
+  { title: "Openbank — Mortgages",      meta: "Banking · UX/UI",          url: "https://www.behance.net/gallery/127543835/Openbank-Mortgages",           img: "https://mir-s3-cdn-cf.behance.net/projects/404/63f62f127543835.Y3JvcCwxOTExLDE0OTQsMCwzMTUw.jpg" },
+  { title: "Openbank — Contact Center", meta: "Backoffice · Tooling",      url: "https://www.behance.net/gallery/127543723/Openbank-Contact-Center",       img: "https://mir-s3-cdn-cf.behance.net/projects/404/237532127543723.Y3JvcCwxOTExLDE0OTQsMCwxOTI5.jpg" },
+  { title: "Movistar",                  meta: "Telco · Product Design",    url: "https://www.behance.net/gallery/127543559/Movistar",                      img: "https://mir-s3-cdn-cf.behance.net/projects/404/371381127543559.Y3JvcCwxOTExLDE0OTQsMCwxOTI5.jpg" },
+  { title: "Ingraph — Landing Page",    meta: "Web Design · Conversion",   url: "https://www.behance.net/gallery/42509395/Landing-page-for-ingraph",       img: "https://mir-s3-cdn-cf.behance.net/projects/404/33cf5242509395.Y3JvcCwxNDAzLDEwOTgsMCww.jpg" },
+  { title: "Ingraph — App",             meta: "Dashboard · Data Viz",      url: "https://www.behance.net/gallery/42548135/Ingraph",                        img: "https://mir-s3-cdn-cf.behance.net/projects/404/c81d1242548135.Y3JvcCw5MjQsNzIzLDIzNyww.jpg" },
+  { title: "MyPlanet Card",             meta: "Fintech · Branding",        url: "https://www.behance.net/gallery/29191947/MyPlanet-Card",                  img: "https://mir-s3-cdn-cf.behance.net/projects/404/a1c90b29191947.55e6d4ad7d589.jpg" },
+  { title: "Socam OS",                  meta: "UI Design · System",        url: "https://www.behance.net/gallery/42605465/Socam-OS",                       img: "https://mir-s3-cdn-cf.behance.net/projects/404/c6c4d442605465.Y3JvcCwxNDAzLDEwOTgsMCww.jpg" },
+  { title: "Spiralized App",            meta: "Mobile · App Design",       url: "https://www.behance.net/gallery/15000837/Spiralized-app",                 img: "https://mir-s3-cdn-cf.behance.net/projects/404/15000837.5488f1091e71d.png" },
+  { title: "Smart Luxurys",             meta: "E-Commerce · Web",          url: "https://www.behance.net/gallery/9793143/Smart-Luxurys",                   img: "https://mir-s3-cdn-cf.behance.net/projects/404/9793143.547e812d18f6c.jpg" },
+  { title: "H&M Gestión — Web",         meta: "Corporate · Web Design",    url: "https://www.behance.net/gallery/8099803/Hym-Gestion-web-design",          img: "https://mir-s3-cdn-cf.behance.net/projects/404/8099803.54757f57ee129.png" },
+  { title: "H&M Gestión — Brand",       meta: "Branding · Identity",       url: "https://www.behance.net/gallery/3892303/Brand-H-M-gestion",               img: "https://mir-s3-cdn-cf.behance.net/projects/404/3892303.545f54f224947.png" }
+];
+
 async function init() {
-  await typeInto(document.getElementById("hname"), "ÁLEX MÉNDEZ");
+  await typeInto(document.getElementById("hname"),  "ÁLEX MÉNDEZ");
   await typeInto(document.getElementById("htitle"), "Product Designer · Design Engineer");
-  await typeInto(document.getElementById("hloc"), "Madrid, Spain");
+  await typeInto(document.getElementById("hloc"),   "Madrid, Spain");
   await wait(400);
 
   await runCmd("whoami", (o) => {
-    o.innerHTML = `<div class="oline w">ÁLEX MÉNDEZ</div><div class="oline g">Product Designer · Design Engineer</div><div class="oline">Madrid, Spain</div>`;
+    o.innerHTML = `
+      <div class="oline w">ÁLEX MÉNDEZ</div>
+      <div class="oline g">Product Designer · Design Engineer</div>
+      <div class="oline">Madrid, Spain &nbsp;·&nbsp; Open to new roles</div>`;
   });
 
   await runCmd("cat about.txt", (o) => {
     o.innerHTML = `
-      <div class="oline">Senior Product Designer with 12+ years shipping enterprise SaaS</div>
-      <div class="oline">in high-stakes fintech. Deep expertise in design systems —</div>
-      <div class="oline">token architecture, component libraries, design-to-code delivery.</div>
-      <div class="oline">Growing toward Design Engineering: HTML/CSS, Style Dictionary,</div>
-      <div class="oline">WCAG 2.1 AA. AI-augmented workflows: Supabase, Claude, GitHub.</div>`;
+      <div class="oline">12+ years designing and engineering SaaS products at scale.</div>
+      <div class="oline">I build design systems from scratch — token architecture,</div>
+      <div class="oline">component libraries, governance — and bridge the gap between</div>
+      <div class="oline">design and front-end development. Currently sole designer at</div>
+      <div class="oline">a global fintech platform operating in 160+ countries.</div>`;
   });
 
   await runCmd("ls work/", (o) => {
     const projects = [
-      { t: "Ria Money Transfer · Euronet", r: "Lead Product Designer (2022–Present)", d: "Led end-to-end product design for Ria's internal B2B SaaS platform used by agents in 160+ countries.", tags: ["Design Systems", "Figma", "WCAG 2.1 AA"] },
-      { t: "Openbank · Santander Group", r: "Design System Specialist (2020–2022)", d: "Designed the end-to-end design system for Spain's largest digital bank. 3-layer token architecture.", tags: ["React", "Style Dictionary", "UI Analytics"] },
-      { t: "Globant", r: "Senior UI Designer (2016–2020)", d: "Optimised UIs for mobile apps and enterprise dashboards for distributed engineering teams.", tags: ["Product Design", "Mobile", "Prototyping"] }
+      {
+        t: "Ria Money Transfer · Euronet",
+        r: "Lead Product Designer · Mar 2023 – Present",
+        d: "Built the entire design system from zero for a B2B SaaS platform used by 10K–100K agents in 160+ countries. Token architecture, 40+ components, WCAG 2.1 AA — all owned end-to-end as the sole designer. Tokens now live in Storybook with the front-end team.",
+        tags: ["Design Systems", "Token Architecture", "WCAG 2.1 AA", "Storybook"],
+        nda: true
+      },
+      {
+        t: "Openbank · Santander Group",
+        r: "Design System Specialist · Apr 2020 – May 2022",
+        d: "Architected a full design system for Spain's leading digital bank: 3-layer token system, 60+ documented components, full React parity. Introduced UI analytics — removed ~30% of low-value components. Led federated governance across multiple squads.",
+        tags: ["React", "Style Dictionary", "UI Analytics", "Governance"]
+      },
+      {
+        t: "Globant",
+        r: "Senior UI Designer · Nov 2016 – Apr 2020",
+        d: "Designed enterprise digital products for international clients. Led UX flows, prototyping and design delivery across apps, dashboards and platforms. Mentored junior designers.",
+        tags: ["Product Design", "Mobile", "Prototyping"]
+      }
     ];
     projects.forEach(p => {
+      const ndaNote = p.nda
+        ? `<div class="oline" style="margin-top:8px;color:#f78166;">⚠ NDA — available to view in interview</div>`
+        : "";
       o.innerHTML += `
-        <div class="pbox show">
+        <div class="pbox${p.nda ? " nda" : ""}">
           <div class="ptitle">${p.t}</div>
           <div class="prole">${p.r}</div>
           <div class="oline">${p.d}</div>
-          <div class="ptags">${p.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+          ${ndaNote}
+          <div>${p.tags.map(t => `<span class="tag${p.nda ? " nda-tag" : ""}">${t}</span>`).join("")}</div>
         </div>`;
     });
   });
 
+  await runCmd("ls portfolio/", (o) => {
+    o.innerHTML = `<div class="oline" style="margin-bottom:12px;">→ <a href="https://www.behance.net/amendez" target="_blank" style="color:var(--blue)">behance.net/amendez</a></div>`;
+    const grid = document.createElement("div");
+    grid.className = "portfolio-grid";
+    portfolioProjects.forEach(p => {
+      grid.innerHTML += `
+        <a class="p-card" href="${p.url}" target="_blank" rel="noopener">
+          <img src="${p.img}" alt="${p.title}" loading="lazy">
+          <div class="p-card-info">
+            <div class="p-card-title">${p.title}</div>
+            <div class="p-card-meta">${p.meta}</div>
+            <div class="p-card-arrow">→ view</div>
+          </div>
+        </a>`;
+    });
+    o.appendChild(grid);
+  });
+
   await runCmd("ls downloads/", (o) => {
     o.innerHTML = `
-      <div class="oline">2-page PDF — Product Designer & Design Engineer</div>
-      <a href="CV.pdf" download="CV_Alex_Mendez.pdf" class="dl-btn">↓ Download CV</a>`;
+      <div class="oline">Product Designer & Design Engineer · 2025</div>
+      <a href="CV.pdf" download="CV_Alex_Mendez_2025.pdf" class="dl-btn">↓ Download CV</a>`;
   });
 
   await runCmd("cat contact.txt", (o) => {
