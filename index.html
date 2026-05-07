@@ -285,7 +285,7 @@
     transition: background 0.15s;
   }
   .nav-btn:hover:not(:disabled) { background: rgba(88,166,255,0.18); }
-  .nav-btn:disabled { opacity: 0.28; cursor: default; }
+  .nav-btn:disabled { opacity: 0; pointer-events: none; }
 
   /* ── RESPONSIVE ── */
   @media (max-width: 600px) {
@@ -447,17 +447,6 @@ const PROJECTS = [
     thumb:   "https://mir-s3-cdn-cf.behance.net/projects/404/c6c4d442605465.Y3JvcCwxNDAzLDEwOTgsMCww.jpg",
     behance: "https://www.behance.net/gallery/42605465/Socam-OS"
   },
-  {
-    id:      "openbank-contact",
-    title:   "Openbank — Contact Center",
-    meta:    "Backoffice \xb7 Tooling \xb7 2022",
-    role:    "Design System Specialist \xb7 Openbank / Santander Group",
-    desc:    "Internal backoffice tooling for Openbank’s contact center agents — customer lookup, account management, and incident resolution flows. NDA project: full case study available on request.",
-    tags:    ["Backoffice","Tooling","Design System","B2B","NDA"],
-    img:     null,
-    thumb:   "https://mir-s3-cdn-cf.behance.net/projects/404/237532127543723.Y3JvcCwxOTExLDE0OTQsMCwxOTI5.jpg",
-    behance: "https://www.behance.net/gallery/127543723/Openbank-Contact-Center"
-  }
 ];
 
 // ── DETAIL VIEW LOGIC ──────────────────────────────────────────────────────
