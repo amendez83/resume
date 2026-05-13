@@ -4,9 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Álex Méndez — Product Designer & Design Engineer</title>
-<link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  /* ── THEMES ── */
   :root {
     --bg:      #0d1117;
     --surface: #161b22;
@@ -19,28 +21,46 @@
     --yellow:  #d29922;
     --orange:  #f0883e;
     --dim:     #484f58;
+    --titlebar:#161b22;
+  }
+  [data-theme="light"] {
+    --bg:      #ffffff;
+    --surface: #f6f8fa;
+    --border:  #d0d7de;
+    --prompt:  #cf222e;
+    --cmd:     #1f2328;
+    --output:  #57606a;
+    --green:   #1a7f37;
+    --blue:    #0969da;
+    --yellow:  #9a6700;
+    --orange:  #bc4c00;
+    --dim:     #afb8c1;
+    --titlebar:#f6f8fa;
   }
 
-  /* ── SCANLINES ── */
   body {
     background: var(--bg);
     color: var(--cmd);
-    font-family: 'VT323', monospace;
-    font-size: 18px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
     line-height: 1.5;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 30px 15px;
+    transition: background 0.25s, color 0.25s;
   }
-  body::before {
+  [data-theme="dark"] body::before, body::before {
     content: '';
     position: fixed;
     inset: 0;
     background: repeating-linear-gradient(to bottom, transparent 0px, transparent 2px, rgba(0,0,0,0.07) 2px, rgba(0,0,0,0.07) 3px);
     pointer-events: none;
     z-index: 9999;
+  }
+  [data-theme="light"] body::before {
+    display: none;
   }
 
   /* ── MAIN WINDOW ── */
@@ -52,20 +72,105 @@
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 20px 70px rgba(0,0,0,0.7);
+    transition: background 0.25s, border-color 0.25s;
   }
+  [data-theme="light"] .window {
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  }
+
   .titlebar {
-    background: #161b22;
+    background: var(--titlebar);
     border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
-    padding: 12px 16px;
+    padding: 10px 16px;
     gap: 9px;
+    transition: background 0.25s, border-color 0.25s;
   }
-  .dot { width: 13px; height: 13px; border-radius: 50%; }
+  .dot { width: 13px; height: 13px; border-radius: 50%; flex-shrink: 0; }
   .dot-r { background: #ff5f57; }
   .dot-y { background: #febc2e; }
   .dot-g { background: #28c840; }
-  .tlabel { flex: 1; text-align: center; color: var(--output); font-size: 16px; }
+  .tlabel {
+    flex: 1;
+    text-align: center;
+    color: var(--output);
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ── TITLEBAR CONTROLS ── */
+  .titlebar-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  /* Theme toggle */
+  .theme-toggle {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--output);
+    cursor: pointer;
+    user-select: none;
+  }
+  .theme-toggle .icon { font-size: 13px; line-height: 1; }
+  .toggle-track {
+    width: 32px; height: 17px;
+    background: var(--border);
+    border-radius: 9px;
+    position: relative;
+    transition: background 0.2s;
+    cursor: pointer;
+    border: 1px solid var(--dim);
+  }
+  .toggle-track.on { background: var(--green); border-color: var(--green); }
+  .toggle-thumb {
+    position: absolute;
+    top: 2px; left: 2px;
+    width: 11px; height: 11px;
+    background: #fff;
+    border-radius: 50%;
+    transition: left 0.2s;
+  }
+  .toggle-track.on .toggle-thumb { left: 17px; }
+
+  /* Lang toggle */
+  .lang-toggle {
+    display: flex;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+  }
+  .lang-btn {
+    padding: 2px 7px;
+    background: none;
+    border: none;
+    color: var(--dim);
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    transition: background 0.15s, color 0.15s;
+  }
+  .lang-btn.active {
+    background: var(--green);
+    color: #000;
+  }
+  .lang-btn:not(.active):hover { color: var(--output); }
+
+  /* separator */
+  .ctrl-sep {
+    width: 1px; height: 16px;
+    background: var(--border);
+    flex-shrink: 0;
+  }
+
   .term { padding: 25px 30px 35px; }
 
   /* ── HEADER ── */
@@ -85,21 +190,21 @@
     overflow: hidden;
   }
   .avatar-wrap img { width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
-  .hname  { font-size: 42px; color: var(--cmd); line-height: 1; }
-  .htitle { font-size: 22px; color: var(--green); margin-top: 2px; }
-  .hloc   { font-size: 18px; color: var(--output); margin-top: 4px; }
+  .hname  { font-size: 28px; font-weight: 700; color: var(--cmd); line-height: 1; }
+  .htitle { font-size: 14px; font-weight: 500; color: var(--green); margin-top: 4px; }
+  .hloc   { font-size: 13px; color: var(--output); margin-top: 4px; }
 
   /* ── TERMINAL LINES ── */
   .pline { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; opacity: 0; transition: opacity 0.1s; }
   .pline.show { opacity: 1; }
-  .ps1  { color: var(--prompt); font-size: 20px; }
-  .pcmd { color: var(--cmd); font-size: 20px; }
-  .cur  { display: inline-block; width: 10px; height: 20px; background: var(--cmd); animation: blink 1s step-start infinite; margin-left: 2px; }
+  .ps1  { color: var(--prompt); font-size: 15px; font-weight: 700; }
+  .pcmd { color: var(--cmd); font-size: 14px; }
+  .cur  { display: inline-block; width: 8px; height: 16px; background: var(--cmd); animation: blink 1s step-start infinite; margin-left: 2px; }
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
   .oblock { margin-bottom: 22px; opacity: 0; transform: translateY(5px); transition: opacity 0.25s, transform 0.25s; }
   .oblock.show { opacity: 1; transform: none; }
-  .oline { color: var(--output); font-size: 18px; line-height: 1.6; }
-  .oline.w { color: var(--cmd); }
+  .oline { color: var(--output); font-size: 13px; line-height: 1.7; }
+  .oline.w { color: var(--cmd); font-weight: 500; }
   .oline.g { color: var(--green); }
 
   /* ── WORK BOXES ── */
@@ -109,12 +214,13 @@
     background: var(--surface);
     padding: 15px 20px; margin: 10px 0 20px;
     border-radius: 4px;
+    transition: background 0.25s, border-color 0.25s;
   }
   .pbox.nda { border-left-color: #f78166; }
-  .ptitle { color: var(--orange); font-size: 22px; }
+  .ptitle { color: var(--orange); font-size: 15px; font-weight: 700; }
   .pbox.nda .ptitle { color: #f78166; }
-  .prole  { color: var(--yellow); font-size: 17px; margin-bottom: 8px; }
-  .tag { background: rgba(88,166,255,0.1); border: 1px solid rgba(88,166,255,0.2); color: var(--blue); font-size: 15px; padding: 2px 10px; border-radius: 4px; margin-right: 6px; display: inline-block; margin-top: 5px; }
+  .prole  { color: var(--yellow); font-size: 13px; font-weight: 500; margin-bottom: 8px; }
+  .tag { background: rgba(88,166,255,0.1); border: 1px solid rgba(88,166,255,0.2); color: var(--blue); font-size: 11px; padding: 2px 8px; border-radius: 4px; margin-right: 6px; display: inline-block; margin-top: 5px; font-family: 'JetBrains Mono', monospace; }
   .tag.nda-tag { background: rgba(247,129,102,0.1); border-color: rgba(247,129,102,0.3); color: #f78166; }
 
   /* ── PORTFOLIO GRID ── */
@@ -131,7 +237,7 @@
     overflow: hidden;
     cursor: pointer;
     display: block;
-    transition: border-color 0.2s, transform 0.15s;
+    transition: border-color 0.2s, transform 0.15s, background 0.25s;
   }
   .p-card:hover { border-color: var(--blue); transform: translateY(-2px); }
   .p-card img {
@@ -144,16 +250,16 @@
   }
   .p-card:hover img { filter: grayscale(0%); }
   .p-card-info  { padding: 10px 12px; }
-  .p-card-title { color: var(--cmd); font-size: 17px; line-height: 1.3; }
-  .p-card-meta  { color: var(--dim); font-size: 14px; margin-top: 3px; }
-  .p-card-arrow { color: var(--blue); font-size: 14px; margin-top: 4px; }
+  .p-card-title { color: var(--cmd); font-size: 13px; line-height: 1.3; font-weight: 500; }
+  .p-card-meta  { color: var(--dim); font-size: 11px; margin-top: 3px; }
+  .p-card-arrow { color: var(--blue); font-size: 11px; margin-top: 4px; }
 
   /* ── CONTACT / DOWNLOAD ── */
   .clinks { display: flex; flex-wrap: wrap; gap: 8px 30px; margin-top: 5px; }
-  .clinks a { color: var(--blue); text-decoration: none; font-size: 18px; }
+  .clinks a { color: var(--blue); text-decoration: none; font-size: 13px; }
   .clinks a:hover { text-decoration: underline; }
   .clinks a::before { content: "-> "; color: var(--dim); }
-  .dl-btn { display: inline-block; background: rgba(240,136,62,0.1); border: 1px solid var(--orange); color: var(--orange); padding: 5px 15px; border-radius: 4px; text-decoration: none; margin-top: 10px; transition: 0.2s; font-family: 'VT323', monospace; font-size: 18px; }
+  .dl-btn { display: inline-block; background: rgba(240,136,62,0.1); border: 1px solid var(--orange); color: var(--orange); padding: 5px 15px; border-radius: 4px; text-decoration: none; margin-top: 10px; transition: 0.2s; font-family: 'JetBrains Mono', monospace; font-size: 13px; }
   .dl-btn:hover { background: var(--orange); color: #000; }
 
   /* ── DETAIL OVERLAY ── */
@@ -165,36 +271,36 @@
     display: flex;
     flex-direction: column;
     transform: translateX(100%);
-    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), background 0.25s;
   }
   #detail-view.open { transform: translateX(0); }
 
   .detail-bar {
-    background: #161b22;
+    background: var(--titlebar);
     border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
     padding: 12px 20px;
     gap: 14px;
     flex-shrink: 0;
+    transition: background 0.25s, border-color 0.25s;
   }
   .detail-dots { display: flex; gap: 7px; }
   .back-btn {
-    font-family: 'VT323', monospace;
-    font-size: 19px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
     color: var(--prompt);
     background: rgba(247,129,102,0.08);
     border: 1px solid rgba(247,129,102,0.3);
     border-radius: 4px;
-    padding: 2px 12px;
+    padding: 3px 12px;
     cursor: pointer;
     transition: background 0.15s;
     flex-shrink: 0;
   }
   .back-btn:hover { background: rgba(247,129,102,0.18); color: var(--cmd); }
-  .detail-bar-cmd { color: var(--output); font-size: 15px; flex: 1; text-align: center; }
+  .detail-bar-cmd { color: var(--output); font-size: 12px; flex: 1; text-align: center; }
 
-  /* detail body scroll area */
   .detail-body {
     flex: 1;
     overflow-y: auto;
@@ -205,54 +311,29 @@
     margin: 0 auto;
     padding: 28px 30px 50px;
   }
-
-  /* detail project info */
-  .detail-title-big {
-    font-size: 34px;
-    color: var(--orange);
-    line-height: 1.1;
-    margin-bottom: 4px;
-  }
-  .detail-role-line {
-    font-size: 19px;
-    color: var(--yellow);
-    margin-bottom: 3px;
-  }
-  .detail-meta-line {
-    font-size: 16px;
-    color: var(--dim);
-    margin-bottom: 14px;
-  }
-  .detail-desc {
-    font-size: 18px;
-    color: var(--output);
-    line-height: 1.7;
-    margin-bottom: 14px;
-    max-width: 680px;
-  }
+  .detail-title-big { font-size: 24px; font-weight: 700; color: var(--orange); line-height: 1.1; margin-bottom: 4px; }
+  .detail-role-line { font-size: 14px; font-weight: 500; color: var(--yellow); margin-bottom: 3px; }
+  .detail-meta-line { font-size: 12px; color: var(--dim); margin-bottom: 14px; }
+  .detail-desc      { font-size: 13px; color: var(--output); line-height: 1.8; margin-bottom: 14px; max-width: 680px; }
   .detail-tags { margin-bottom: 26px; }
 
-  /* project screenshot */
   .detail-img-wrap {
     border: 1px solid var(--border);
     border-radius: 6px;
     overflow: hidden;
     margin-bottom: 28px;
     background: var(--surface);
+    transition: background 0.25s, border-color 0.25s;
   }
-  .detail-img-wrap img {
-    width: 100%;
-    display: block;
-  }
+  .detail-img-wrap img { width: 100%; display: block; }
   .detail-img-placeholder {
     padding: 40px 30px;
     text-align: center;
     color: var(--dim);
-    font-size: 17px;
+    font-size: 13px;
     line-height: 1.8;
   }
 
-  /* footer nav */
   .detail-footer {
     display: flex;
     align-items: center;
@@ -263,19 +344,14 @@
     border-top: 1px solid var(--border);
     margin-top: 4px;
   }
-  .behance-link {
-    font-family: 'VT323', monospace;
-    font-size: 18px;
-    color: var(--blue);
-    text-decoration: none;
-  }
+  .behance-link { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--blue); text-decoration: none; }
   .behance-link::before { content: "-> "; color: var(--dim); }
   .behance-link:hover { text-decoration: underline; }
 
   .detail-nav { display: flex; gap: 10px; }
   .nav-btn {
-    font-family: 'VT323', monospace;
-    font-size: 18px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
     background: rgba(88,166,255,0.08);
     border: 1px solid rgba(88,166,255,0.25);
     color: var(--blue);
@@ -293,6 +369,7 @@
     .portfolio-grid { grid-template-columns: 1fr 1fr; }
     .detail-inner { padding: 20px 16px 40px; }
     .detail-footer { flex-direction: column; align-items: flex-start; }
+    .tlabel { display: none; }
   }
 </style>
 </head>
@@ -305,7 +382,28 @@
     <div class="dot dot-y"></div>
     <div class="dot dot-g"></div>
     <div class="tlabel">amendez83 — bash — 80×24</div>
+
+    <!-- Controls -->
+    <div class="titlebar-controls">
+      <!-- Dark / Light -->
+      <label class="theme-toggle" title="Toggle dark/light mode">
+        <span class="icon">🌙</span>
+        <div class="toggle-track on" id="theme-track" onclick="toggleTheme()">
+          <div class="toggle-thumb"></div>
+        </div>
+        <span class="icon">☀️</span>
+      </label>
+
+      <div class="ctrl-sep"></div>
+
+      <!-- EN / ES -->
+      <div class="lang-toggle">
+        <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
+        <button class="lang-btn"        id="btn-es" onclick="setLang('es')">ES</button>
+      </div>
+    </div>
   </div>
+
   <div class="term">
     <div class="header-row">
       <div class="avatar-wrap">
@@ -332,7 +430,6 @@
     <button class="back-btn" onclick="closeDetail()">← back</button>
     <div class="detail-bar-cmd" id="detail-bar-cmd">cat portfolio/project.md</div>
   </div>
-
   <div class="detail-body" id="detail-body">
     <div class="detail-inner">
       <div class="detail-title-big" id="d-title"></div>
@@ -340,11 +437,7 @@
       <div class="detail-meta-line" id="d-meta"></div>
       <div class="detail-desc"      id="d-desc"></div>
       <div class="detail-tags"      id="d-tags"></div>
-
-      <div class="detail-img-wrap"  id="d-img-wrap">
-        <!-- image or placeholder injected here -->
-      </div>
-
+      <div class="detail-img-wrap"  id="d-img-wrap"></div>
       <div class="detail-footer">
         <a class="behance-link" id="d-behance" href="#" target="_blank" rel="noopener">View full project on Behance</a>
         <div class="detail-nav">
@@ -359,24 +452,140 @@
 <script>
 "use strict";
 
-// ── PORTFOLIO PROJECT DATA ──────────────────────────────────────────────────
-//
-// For projects with screenshots: save the image files to an /assets/ folder
-// in your GitHub repo with the names below. They'll display full-width in the
-// detail view. If the file is missing, a message with the Behance link appears.
-//
-// Files needed in /assets/:
-//   socam.png | myplanet.png | ingraph-app.png | ingraph-landing.png
-//   movistar.png | openbank-investments.png | openbank-mortgages.png
-//
-const PROJECTS = [
+// ── THEME ────────────────────────────────────────────────────────────────────
+var _theme = "dark";
+function toggleTheme() {
+  _theme = _theme === "dark" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", _theme);
+  var track = document.getElementById("theme-track");
+  if (_theme === "light") {
+    track.classList.remove("on");
+  } else {
+    track.classList.add("on");
+  }
+}
+document.documentElement.setAttribute("data-theme", "dark");
+
+// ── LANGUAGE ─────────────────────────────────────────────────────────────────
+var _lang = "en";
+
+var STRINGS = {
+  en: {
+    tlabel:   "amendez83 — bash — 80×24",
+    hloc:     "Madrid, Spain",
+    htitle:   "Product Designer · Design Engineer",
+    open:     "Open to new roles",
+    about_cmd:"cat about.txt",
+    about: [
+      "12+ years designing and engineering SaaS products at scale.",
+      "I build design systems from scratch — token architecture,",
+      "component libraries, governance — and bridge the gap between",
+      "design and front-end development. Currently sole designer at",
+      "a global fintech platform operating in 160+ countries.",
+      "AI-augmented workflows: Supabase · Claude · GitHub"
+    ],
+    work_cmd: "ls work/",
+    work: [
+      {
+        t: "Ria Money Transfer · Euronet",
+        r: "Lead Product Designer · Mar 2023 – Present",
+        d: "Built the entire design system from zero for a B2B SaaS platform used by 10K–100K agents in 160+ countries. Token architecture, 40+ components, WCAG 2.1 AA — all owned end-to-end as the sole designer. Tokens live in Storybook alongside the front-end team.",
+        tags: ["Design Systems","Token Architecture","WCAG 2.1 AA","Storybook"],
+        nda: true,
+        nda_note: "⚠ NDA — available to view in interview"
+      },
+      {
+        t: "Openbank · Santander Group",
+        r: "Design System Specialist · Apr 2020 – May 2022",
+        d: "Architected a full design system for Spain's leading digital bank: 3-layer token system, 60+ documented components, full React parity. Introduced UI analytics — removed ~30% of low-value components. Led federated governance across multiple squads.",
+        tags: ["React","Style Dictionary","UI Analytics","Governance"]
+      },
+      {
+        t: "Globant",
+        r: "Senior UI Designer · Nov 2016 – Apr 2020",
+        d: "Designed enterprise digital products for international clients. Led UX flows, prototyping and design delivery across apps, dashboards and platforms. Mentored junior designers.",
+        tags: ["Product Design","Mobile","Prototyping"]
+      }
+    ],
+    portfolio_cmd: "ls portfolio/",
+    portfolio_link: "→ behance.net/amendez",
+    view_project: "→ view project",
+    downloads_cmd: "ls downloads/",
+    downloads_label: "Product Designer & Design Engineer · 2025",
+    download_btn: "↓ Download CV",
+    contact_cmd: "cat contact.txt",
+    back_btn: "← back",
+    view_behance: "View full project on Behance"
+  },
+  es: {
+    tlabel:   "amendez83 — bash — 80×24",
+    hloc:     "Madrid, España",
+    htitle:   "Diseñador de Producto · Ingeniero de Diseño",
+    open:     "Disponible para nuevas oportunidades",
+    about_cmd:"cat sobre-mi.txt",
+    about: [
+      "12+ años diseñando y desarrollando productos SaaS a escala.",
+      "Construyo sistemas de diseño desde cero — arquitectura de tokens,",
+      "librerías de componentes, gobernanza — y cierro la brecha entre",
+      "diseño y desarrollo front-end. Actualmente único diseñador en",
+      "una plataforma fintech global presente en más de 160 países.",
+      "Flujos aumentados con IA: Supabase · Claude · GitHub"
+    ],
+    work_cmd: "ls trabajo/",
+    work: [
+      {
+        t: "Ria Money Transfer · Euronet",
+        r: "Lead Product Designer · Mar 2023 – Presente",
+        d: "Construí el sistema de diseño desde cero para una plataforma B2B SaaS usada por 10K–100K agentes en 160+ países. Arquitectura de tokens, 40+ componentes, WCAG 2.1 AA — todo gestionado en solitario. Los tokens están implementados en Storybook junto al equipo de front-end.",
+        tags: ["Sistemas de Diseño","Arquitectura de Tokens","WCAG 2.1 AA","Storybook"],
+        nda: true,
+        nda_note: "⚠ NDA — disponible para ver en entrevista"
+      },
+      {
+        t: "Openbank · Santander Group",
+        r: "Design System Specialist · Abr 2020 – May 2022",
+        d: "Diseñé el sistema de diseño completo del banco digital líder en España: sistema de tokens de 3 capas, 60+ componentes documentados, paridad con React. Introduje analítica de UI — eliminé ~30% de componentes de bajo valor. Lideré la gobernanza federada entre múltiples squads.",
+        tags: ["React","Style Dictionary","UI Analytics","Gobernanza"]
+      },
+      {
+        t: "Globant",
+        r: "Senior UI Designer · Nov 2016 – Abr 2020",
+        d: "Diseñé productos digitales empresariales para clientes internacionales. Lideré flujos UX, prototipado y entrega de diseño en apps, dashboards y plataformas. Mentoricé diseñadores junior.",
+        tags: ["Diseño de Producto","Mobile","Prototipado"]
+      }
+    ],
+    portfolio_cmd: "ls portfolio/",
+    portfolio_link: "→ behance.net/amendez",
+    view_project: "→ ver proyecto",
+    downloads_cmd: "ls descargas/",
+    downloads_label: "Diseñador de Producto e Ingeniero de Diseño · 2025",
+    download_btn: "↓ Descargar CV",
+    contact_cmd: "cat contacto.txt",
+    back_btn: "← volver",
+    view_behance: "Ver proyecto completo en Behance"
+  }
+};
+
+function setLang(lang) {
+  _lang = lang;
+  document.getElementById("btn-en").classList.toggle("active", lang === "en");
+  document.getElementById("btn-es").classList.toggle("active", lang === "es");
+  document.documentElement.lang = lang;
+  // Rebuild terminal
+  rebuildTerminal();
+}
+
+// ── PROJECTS ─────────────────────────────────────────────────────────────────
+var PROJECTS = [
   {
     id:      "openbank-mortgages",
     title:   "Openbank — Mortgages",
-    meta:    "Banking \xb7 UX/UI \xb7 2021",
-    role:    "Design System Specialist \xb7 Openbank / Santander Group",
-    desc:    "End-to-end design of the mortgage application flow for Spain’s leading fully digital bank. From research through high-fidelity prototyping to dev handoff — responsive web and mobile. Covered three mortgage product types, pre-qualification flow, and borrower profile forms.",
+    meta:    "Banking · UX/UI · 2021",
+    role:    "Design System Specialist · Openbank / Santander Group",
+    desc:    "End-to-end design of the mortgage application flow for Spain's leading fully digital bank. From research through high-fidelity prototyping to dev handoff — responsive web and mobile. Covered three mortgage product types, pre-qualification flow, and borrower profile forms.",
+    desc_es: "Diseño integral del flujo de solicitud de hipotecas para el banco digital líder en España. Desde la investigación hasta el prototipado de alta fidelidad y el handoff a desarrollo — web responsive y mobile. Cubrió tres tipos de productos hipotecarios, flujo de precalificación y formularios de perfil del solicitante.",
     tags:    ["UX Design","Responsive Web","Banking","Figma","Design System"],
+    tags_es: ["UX Design","Web Responsive","Banca","Figma","Sistema de Diseño"],
     img:     "assets/openbank-mortgages.png",
     thumb:   "https://mir-s3-cdn-cf.behance.net/projects/404/63f62f127543835.Y3JvcCwxOTExLDE0OTQsMCwzMTUw.jpg",
     behance: "https://www.behance.net/gallery/127543835/Openbank-Mortgages"
@@ -384,10 +593,12 @@ const PROJECTS = [
   {
     id:      "openbank-investments",
     title:   "Openbank — Investment Platform",
-    meta:    "Banking \xb7 Product Design \xb7 2021",
-    role:    "Design System Specialist \xb7 Openbank / Santander Group",
-    desc:    "Product design for Openbank’s investment platform — portfolio management, fund search and selection, asset allocation, and transaction confirmation flows for both mobile and desktop. Part of a broader design system initiative spanning multiple product areas within the bank.",
+    meta:    "Banking · Product Design · 2021",
+    role:    "Design System Specialist · Openbank / Santander Group",
+    desc:    "Product design for Openbank's investment platform — portfolio management, fund search and selection, asset allocation, and transaction confirmation flows for both mobile and desktop.",
+    desc_es: "Diseño de producto para la plataforma de inversión de Openbank — gestión de cartera, búsqueda y selección de fondos, asignación de activos y flujos de confirmación de transacciones para móvil y escritorio.",
     tags:    ["Product Design","Mobile","Desktop","Investment UX","Design System"],
+    tags_es: ["Diseño de Producto","Mobile","Desktop","UX Inversión","Sistema de Diseño"],
     img:     "assets/openbank-investments.png",
     thumb:   "https://mir-s3-cdn-cf.behance.net/projects/404/237532127543723.Y3JvcCwxOTExLDE0OTQsMCwxOTI5.jpg",
     behance: "https://www.behance.net/gallery/127543723/Openbank-Contact-Center"
@@ -395,10 +606,12 @@ const PROJECTS = [
   {
     id:      "movistar",
     title:   "Movistar — Smart Wi-Fi",
-    meta:    "Telco \xb7 Mobile App \xb7 2019",
-    role:    "Senior UI Designer \xb7 Globant",
-    desc:    "Mobile app design for Movistar’s Smart Wi-Fi router management tool. Covers parental controls with time-restriction scheduling per device, real-time network monitoring, per-user bandwidth analytics, and push notification alerts for unknown devices joining the network.",
-    tags:    ["Mobile App","iOS","Android","Telco","UX/UI","Parental Controls"],
+    meta:    "Telco · Mobile App · 2019",
+    role:    "Senior UI Designer · Globant",
+    desc:    "Mobile app design for Movistar's Smart Wi-Fi router management tool. Parental controls, real-time network monitoring, per-user bandwidth analytics, and push alerts for unknown devices.",
+    desc_es: "Diseño de app móvil para la herramienta de gestión de router Smart Wi-Fi de Movistar. Controles parentales, monitoreo de red en tiempo real, analítica de ancho de banda por usuario y alertas push.",
+    tags:    ["Mobile App","iOS","Android","Telco","UX/UI"],
+    tags_es: ["App Móvil","iOS","Android","Telco","UX/UI"],
     img:     "assets/movistar.png",
     thumb:   "https://mir-s3-cdn-cf.behance.net/projects/404/371381127543559.Y3JvcCwxOTExLDE0OTQsMCwxOTI5.jpg",
     behance: "https://www.behance.net/gallery/127543559/Movistar"
@@ -406,10 +619,12 @@ const PROJECTS = [
   {
     id:      "ingraph-app",
     title:   "Ingraph — Analytics Platform",
-    meta:    "SaaS \xb7 Dashboard \xb7 Data Viz \xb7 2016",
-    role:    "Senior UI Designer \xb7 Globant / ZED World Wide",
-    desc:    "Full UI design for Ingraph, a big data analytics platform built on Twitter data. Complex dashboard with data tables, trend charts, world maps, wordclouds, and live tweet feeds — designed to give brands and media outlets real-time social intelligence at scale.",
-    tags:    ["Dashboard","Data Visualisation","SaaS","Charts","Twitter Analytics"],
+    meta:    "SaaS · Dashboard · 2016",
+    role:    "Senior UI Designer · Globant / ZED World Wide",
+    desc:    "Full UI design for Ingraph, a big data analytics platform built on Twitter data. Complex dashboard with data tables, trend charts, world maps, wordclouds, and live tweet feeds.",
+    desc_es: "Diseño completo de UI para Ingraph, una plataforma de análisis de big data basada en datos de Twitter. Dashboard complejo con tablas de datos, gráficos de tendencias, mapas mundiales, nubes de palabras y feeds de tweets en vivo.",
+    tags:    ["Dashboard","Data Visualisation","SaaS","Charts"],
+    tags_es: ["Dashboard","Visualización de Datos","SaaS","Gráficos"],
     img:     "assets/ingraph-app.png",
     thumb:   "https://mir-s3-cdn-cf.behance.net/projects/404/c81d1242548135.Y3JvcCw5MjQsNzIzLDIzNyww.jpg",
     behance: "https://www.behance.net/gallery/42548135/Ingraph"
@@ -417,10 +632,12 @@ const PROJECTS = [
   {
     id:      "ingraph-landing",
     title:   "Ingraph — Event Landing",
-    meta:    "Web Design \xb7 Conversion \xb7 2016",
-    role:    "Senior UI Designer \xb7 Globant / ZED World Wide",
-    desc:    "Event landing page for Ingraph’s #J_ONTHEBEACH conference. Custom illustrated UI with real-time tweet analysis, a Hall of Fame leaderboard, wordcloud visualisation, and tweet evolution charts. Full scroll-based storytelling design from concept to final handoff.",
-    tags:    ["Landing Page","Event Design","Custom Illustration","Social Media","Conversion"],
+    meta:    "Web Design · Conversion · 2016",
+    role:    "Senior UI Designer · Globant / ZED World Wide",
+    desc:    "Event landing page for Ingraph's #J_ONTHEBEACH conference. Custom illustrated UI with real-time tweet analysis, a Hall of Fame leaderboard, wordcloud visualisation, and tweet evolution charts.",
+    desc_es: "Landing page para el evento #J_ONTHEBEACH de Ingraph. UI con ilustración personalizada, análisis de tweets en tiempo real, ranking Hall of Fame, visualización de nube de palabras y gráficos de evolución.",
+    tags:    ["Landing Page","Event Design","Social Media","Conversion"],
+    tags_es: ["Landing Page","Diseño de Evento","Redes Sociales","Conversión"],
     img:     "assets/ingraph-landing.png",
     thumb:   "https://mir-s3-cdn-cf.behance.net/projects/404/33cf5242509395.Y3JvcCwxNDAzLDEwOTgsMCww.jpg",
     behance: "https://www.behance.net/gallery/42509395/Landing-page-for-ingraph"
@@ -428,10 +645,12 @@ const PROJECTS = [
   {
     id:      "myplanet",
     title:   "MyPlanet Card",
-    meta:    "Fintech \xb7 Branding \xb7 UX \xb7 2015",
-    role:    "Senior UI Designer \xb7 Globant",
-    desc:    "Brand identity and full UX/UI design for MyPlanet — a prepaid MasterCard aimed at teens and young adults. Included card design, the web platform (card management, top-ups, spend history), and mobile app for balance tracking and peer transfers.",
-    tags:    ["Branding","Fintech","Card Design","Mobile App","Web","MasterCard"],
+    meta:    "Fintech · Branding · UX · 2015",
+    role:    "Senior UI Designer · Globant",
+    desc:    "Brand identity and full UX/UI design for MyPlanet — a prepaid MasterCard aimed at teens and young adults. Card design, web platform, and mobile app for balance tracking and peer transfers.",
+    desc_es: "Identidad de marca y diseño UX/UI completo para MyPlanet — una tarjeta MasterCard prepago dirigida a jóvenes. Diseño de la tarjeta, plataforma web y app móvil para seguimiento de saldo y transferencias.",
+    tags:    ["Branding","Fintech","Card Design","Mobile App"],
+    tags_es: ["Branding","Fintech","Diseño de Tarjeta","App Móvil"],
     img:     "assets/myplanet.png",
     thumb:   "https://mir-s3-cdn-cf.behance.net/projects/404/a1c90b29191947.55e6d4ad7d589.jpg",
     behance: "https://www.behance.net/gallery/29191947/MyPlanet-Card"
@@ -439,63 +658,48 @@ const PROJECTS = [
   {
     id:      "socam",
     title:   "Socam OS",
-    meta:    "UI Design \xb7 Mobile OS \xb7 2016",
-    role:    "Senior UI Designer \xb7 Globant",
-    desc:    "UI design for Socam — an open-source multi-device operating system backed by the Colombian Ministry of Education. Scope included brand identity, marketing site, and the full mobile UI: launcher, lock screen, notification system, settings, and core bundled apps.",
-    tags:    ["UI Design","Mobile OS","Branding","Marketing Site","Government","Open Source"],
+    meta:    "UI Design · Mobile OS · 2016",
+    role:    "Senior UI Designer · Globant",
+    desc:    "UI design for Socam — an open-source multi-device OS backed by the Colombian Ministry of Education. Brand identity, marketing site, and full mobile UI: launcher, lock screen, notifications, and core apps.",
+    desc_es: "Diseño de UI para Socam — un sistema operativo open-source respaldado por el Ministerio de Educación de Colombia. Identidad de marca, sitio de marketing y UI móvil completa: launcher, pantalla de bloqueo, notificaciones y apps principales.",
+    tags:    ["UI Design","Mobile OS","Branding","Government"],
+    tags_es: ["Diseño UI","OS Móvil","Branding","Gobierno"],
     img:     "assets/socam.png",
     thumb:   "https://mir-s3-cdn-cf.behance.net/projects/404/c6c4d442605465.Y3JvcCwxNDAzLDEwOTgsMCww.jpg",
     behance: "https://www.behance.net/gallery/42605465/Socam-OS"
-  },
+  }
 ];
 
-// ── DETAIL VIEW LOGIC ──────────────────────────────────────────────────────
-let currentIdx = 0;
+// ── DETAIL VIEW ───────────────────────────────────────────────────────────────
+var currentIdx = 0;
 
 function openDetail(idx) {
   currentIdx = idx;
-  const p = PROJECTS[idx];
+  var p = PROJECTS[idx];
+  var s = STRINGS[_lang];
+  var isEs = _lang === "es";
 
-  // Titlebar command
-  document.getElementById("detail-bar-cmd").textContent =
-    "❯ cat portfolio/" + p.id + ".md";
-
-  // Info
+  document.getElementById("detail-bar-cmd").textContent = "❯ cat portfolio/" + p.id + ".md";
   document.getElementById("d-title").textContent = p.title;
   document.getElementById("d-role").textContent  = p.role;
   document.getElementById("d-meta").textContent  = p.meta;
-  document.getElementById("d-desc").textContent  = p.desc;
+  document.getElementById("d-desc").textContent  = isEs ? p.desc_es : p.desc;
 
-  // Tags
+  var tagsArr = isEs ? p.tags_es : p.tags;
   document.getElementById("d-tags").innerHTML =
-    p.tags.map(function(t){ return '<span class="tag">' + t + "</span>"; }).join("");
+    tagsArr.map(function(t){ return '<span class="tag">' + t + "</span>"; }).join("");
 
-  // Image or placeholder
   var imgWrap = document.getElementById("d-img-wrap");
-  if (p.img) {
-    imgWrap.innerHTML =
-      '<img src="' + p.img + '" alt="' + p.title + '" ' +
-      'onerror="this.parentNode.innerHTML=\'<div class=\\\"detail-img-placeholder\\\">Screenshot not found locally.<br>Save <strong>' + p.img + '</strong> to your repo,<br>or <a href=\\\"' + p.behance + '\\\" target=\\\"_blank\\\" style=\\\"color:var(--blue)\\\">view the full project on Behance</a>.</div>\'">';
-  } else {
-    imgWrap.innerHTML =
-      '<div class="detail-img-placeholder">' +
-      "This project is under NDA.<br>" +
-      'Full case study available on request — ' +
-      '<a href="' + p.behance + '" target="_blank" style="color:var(--blue)">preview on Behance</a>.' +
-      "</div>";
-  }
+  imgWrap.innerHTML = '<img src="' + p.img + '" alt="' + p.title + '" ' +
+    'onerror="this.parentNode.innerHTML=\'<div class=\\\"detail-img-placeholder\\\">Screenshot not found locally.<br>Save <strong>' + p.img + '</strong> to your repo,<br>or <a href=\\\"' + p.behance + '\\\" target=\\\"_blank\\\" style=\\\"color:var(--blue)\\\">view on Behance</a>.</div>\'">';
 
-  // Behance link
-  document.getElementById("d-behance").href = p.behance;
+  document.getElementById("d-behance").href        = p.behance;
+  document.getElementById("d-behance").textContent = s.view_behance;
+  document.querySelector(".back-btn").textContent   = s.back_btn;
 
-  // Nav buttons
   document.getElementById("nav-prev").disabled = (idx === 0);
   document.getElementById("nav-next").disabled = (idx === PROJECTS.length - 1);
-
-  // Scroll to top of detail body
   document.getElementById("detail-body").scrollTop = 0;
-
-  // Open
   document.getElementById("detail-view").classList.add("open");
   document.body.style.overflow = "hidden";
 }
@@ -510,17 +714,17 @@ function navigateProject(dir) {
   if (next >= 0 && next < PROJECTS.length) openDetail(next);
 }
 
-// Keyboard: Escape → close, ArrowLeft/Right → navigate
 document.addEventListener("keydown", function(e) {
-  var dv = document.getElementById("detail-view");
-  if (!dv.classList.contains("open")) return;
+  if (!document.getElementById("detail-view").classList.contains("open")) return;
   if (e.key === "Escape")     closeDetail();
   if (e.key === "ArrowLeft")  navigateProject(-1);
   if (e.key === "ArrowRight") navigateProject(1);
 });
 
-// ── TERMINAL ANIMATION ────────────────────────────────────────────────────
-var term = document.getElementById("term");
+// ── TERMINAL ──────────────────────────────────────────────────────────────────
+var termEl = document.getElementById("term");
+var _built = false;
+
 var wait = function(ms){ return new Promise(function(r){ setTimeout(r, ms); }); };
 
 function typeInto(el, text) {
@@ -529,7 +733,7 @@ function typeInto(el, text) {
     function tick() {
       if (i < text.length) {
         el.textContent += text.charAt(i++);
-        setTimeout(tick, 25 + Math.random() * 20);
+        setTimeout(tick, 22 + Math.random() * 18);
       } else { resolve(); }
     }
     tick();
@@ -539,102 +743,83 @@ function typeInto(el, text) {
 function makePromptLine() {
   var line = document.createElement("div");
   line.className = "pline";
-  var ps1 = document.createElement("span"); ps1.className = "ps1"; ps1.textContent = "❯";
-  var cmd = document.createElement("span"); cmd.className = "pcmd";
-  var cur = document.createElement("span"); cur.className = "cur";
-  line.appendChild(ps1);
-  line.appendChild(document.createTextNode(" "));
-  line.appendChild(cmd);
-  line.appendChild(cur);
-  term.appendChild(line);
-  return { line: line, cmd: cmd, cur: cur };
+  line.innerHTML = '<span class="ps1">❯</span> <span class="pcmd"></span><span class="cur"></span>';
+  termEl.appendChild(line);
+  return { line: line, cmd: line.querySelector(".pcmd"), cur: line.querySelector(".cur") };
 }
 
 async function runCmd(text, outputCallback) {
   var p = makePromptLine();
-  await wait(200);
+  await wait(180);
   p.line.classList.add("show");
   await typeInto(p.cmd, text);
-  await wait(150);
+  await wait(130);
   p.cur.remove();
   var oblock = document.createElement("div");
   oblock.className = "oblock";
-  term.appendChild(oblock);
+  termEl.appendChild(oblock);
   outputCallback(oblock);
   requestAnimationFrame(function(){ oblock.classList.add("show"); });
-  await wait(600);
+  await wait(500);
 }
 
-async function init() {
-  await typeInto(document.getElementById("hname"),  "\xc1LEX M\xc9NDEZ");
-  await typeInto(document.getElementById("htitle"), "Product Designer \xb7 Design Engineer");
-  await typeInto(document.getElementById("hloc"),   "Madrid, Spain");
-  await wait(400);
+function buildWorkBox(p, isNda) {
+  var ndaNote = isNda
+    ? '<div class="oline" style="margin-top:8px;color:#f78166;">' + p.nda_note + '</div>'
+    : "";
+  return '<div class="pbox' + (isNda ? " nda" : "") + '">' +
+    '<div class="ptitle">' + p.t + '</div>' +
+    '<div class="prole">'  + p.r + '</div>' +
+    '<div class="oline">'  + p.d + '</div>' +
+    ndaNote +
+    '<div>' + p.tags.map(function(t){
+      return '<span class="tag' + (isNda ? " nda-tag" : "") + '">' + t + '</span>';
+    }).join("") + '</div>' +
+    '</div>';
+}
 
+async function buildTerminal() {
+  var s = STRINGS[_lang];
+
+  // Header
+  document.getElementById("hname").textContent  = "";
+  document.getElementById("htitle").textContent = "";
+  document.getElementById("hloc").textContent   = "";
+  termEl.innerHTML = "";
+
+  await typeInto(document.getElementById("hname"),  "ÁLEX MÉNDEZ");
+  await typeInto(document.getElementById("htitle"), s.htitle);
+  await typeInto(document.getElementById("hloc"),   s.hloc);
+  await wait(350);
+
+  // whoami
   await runCmd("whoami", function(o) {
     o.innerHTML =
-      '<div class="oline w">\xc1LEX M\xc9NDEZ</div>' +
-      '<div class="oline g">Product Designer \xb7 Design Engineer</div>' +
-      '<div class="oline">Madrid, Spain \xa0\xb7\xa0 Open to new roles</div>';
+      '<div class="oline w">ÁLEX MÉNDEZ</div>' +
+      '<div class="oline g">' + s.htitle + '</div>' +
+      '<div class="oline">' + s.hloc + ' &nbsp;·&nbsp; ' + s.open + '</div>';
   });
 
-  await runCmd("cat about.txt", function(o) {
-    o.innerHTML =
-      '<div class="oline">12+ years designing and engineering SaaS products at scale.</div>' +
-      '<div class="oline">I build design systems from scratch — token architecture,</div>' +
-      '<div class="oline">component libraries, governance — and bridge the gap between</div>' +
-      '<div class="oline">design and front-end development. Currently sole designer at</div>' +
-      '<div class="oline">a global fintech platform operating in 160+ countries.</div>' +
-      '<div class="oline" style="margin-top:6px;color:var(--dim)">AI-augmented workflows: Supabase \xb7 Claude \xb7 GitHub</div>';
+  // about
+  await runCmd(s.about_cmd, function(o) {
+    o.innerHTML = s.about.map(function(line, i) {
+      var style = i === s.about.length - 1 ? ' style="margin-top:6px;color:var(--dim)"' : '';
+      return '<div class="oline"' + style + '>' + line + '</div>';
+    }).join("");
   });
 
-  await runCmd("ls work/", function(o) {
-    var projects = [
-      {
-        t: "Ria Money Transfer \xb7 Euronet",
-        r: "Lead Product Designer \xb7 Mar 2023 – Present",
-        d: "Built the entire design system from zero for a B2B SaaS platform used by 10K–100K agents in 160+ countries. Token architecture, 40+ components, WCAG 2.1 AA — all owned end-to-end as the sole designer. Tokens live in Storybook alongside the front-end team.",
-        tags: ["Design Systems","Token Architecture","WCAG 2.1 AA","Storybook"],
-        nda: true
-      },
-      {
-        t: "Openbank \xb7 Santander Group",
-        r: "Design System Specialist \xb7 Apr 2020 – May 2022",
-        d: "Architected a full design system for Spain’s leading digital bank: 3-layer token system, 60+ documented components, full React parity. Introduced UI analytics — removed ~30% of low-value components. Led federated governance across multiple squads.",
-        tags: ["React","Style Dictionary","UI Analytics","Governance"]
-      },
-      {
-        t: "Globant",
-        r: "Senior UI Designer \xb7 Nov 2016 – Apr 2020",
-        d: "Designed enterprise digital products for international clients. Led UX flows, prototyping and design delivery across apps, dashboards and platforms. Mentored junior designers.",
-        tags: ["Product Design","Mobile","Prototyping"]
-      }
-    ];
-    projects.forEach(function(p) {
-      var ndaNote = p.nda
-        ? '<div class="oline" style="margin-top:8px;color:#f78166;">⚠ NDA — available to view in interview</div>'
-        : "";
-      o.innerHTML +=
-        '<div class="pbox' + (p.nda ? " nda" : "") + '">' +
-          '<div class="ptitle">' + p.t + "</div>" +
-          '<div class="prole">' + p.r + "</div>" +
-          '<div class="oline">' + p.d + "</div>" +
-          ndaNote +
-          "<div>" + p.tags.map(function(t){
-            return '<span class="tag' + (p.nda ? " nda-tag" : "") + '">' + t + "</span>";
-          }).join("") + "</div>" +
-        "</div>";
+  // work
+  await runCmd(s.work_cmd, function(o) {
+    s.work.forEach(function(p) {
+      o.innerHTML += buildWorkBox(p, !!p.nda);
     });
   });
 
-  await runCmd("ls portfolio/", function(o) {
-    o.innerHTML =
-      '<div class="oline" style="margin-bottom:12px;">' +
-        '→ <a href="https://www.behance.net/amendez" target="_blank" rel="noopener" style="color:var(--blue)">behance.net/amendez</a>' +
-      "</div>";
+  // portfolio
+  await runCmd(s.portfolio_cmd, function(o) {
+    o.innerHTML = '<div class="oline" style="margin-bottom:12px;">→ <a href="https://www.behance.net/amendez" target="_blank" rel="noopener" style="color:var(--blue)">behance.net/amendez</a></div>';
     var grid = document.createElement("div");
     grid.className = "portfolio-grid";
-
     PROJECTS.forEach(function(p, idx) {
       var card = document.createElement("div");
       card.className = "p-card";
@@ -645,36 +830,41 @@ async function init() {
       card.innerHTML =
         '<img src="' + p.thumb + '" alt="' + p.title + '" loading="lazy">' +
         '<div class="p-card-info">' +
-          '<div class="p-card-title">' + p.title + "</div>" +
-          '<div class="p-card-meta">'  + p.meta.split("\xb7")[0].trim() + "</div>" +
-          '<div class="p-card-arrow">→ view project</div>' +
-        "</div>";
+          '<div class="p-card-title">' + p.title + '</div>' +
+          '<div class="p-card-meta">'  + p.meta.split("·")[0].trim() + '</div>' +
+          '<div class="p-card-arrow">' + s.view_project + '</div>' +
+        '</div>';
       grid.appendChild(card);
     });
     o.appendChild(grid);
   });
 
-  await runCmd("ls downloads/", function(o) {
+  // downloads
+  await runCmd(s.downloads_cmd, function(o) {
     o.innerHTML =
-      '<div class="oline">Product Designer & Design Engineer \xb7 2025</div>' +
-      '<a href="CV.pdf" download="CV_Alex_Mendez_2025.pdf" class="dl-btn">↓ Download CV</a>';
+      '<div class="oline">' + s.downloads_label + '</div>' +
+      '<a href="CV.pdf" download="CV_Alex_Mendez_2025.pdf" class="dl-btn">' + s.download_btn + '</a>';
   });
 
-  await runCmd("cat contact.txt", function(o) {
+  // contact
+  await runCmd(s.contact_cmd, function(o) {
     o.innerHTML =
       '<div class="clinks">' +
         '<a href="https://linkedin.com/in/amendez83" target="_blank" rel="noopener">linkedin.com/in/amendez83</a>' +
-        '<a href="https://behance.net/amendez"       target="_blank" rel="noopener">behance.net/amendez</a>' +
-        '<a href="mailto:amendez83@gmail.com?subject=Let%E2%80%99s%20talk%20%E2%80%94%20I%20just%20saw%20your%20portfolio&body=Hi%20%C3%81lex%2C%0A%0ASomething%20in%20your%20work%20caught%20my%20attention.%20Would%20love%20to%20connect.%0A%0A">amendez83@gmail.com</a>' +
-      "</div>";
+        '<a href="https://behance.net/amendez" target="_blank" rel="noopener">behance.net/amendez</a>' +
+        '<a href="mailto:amendez83@gmail.com?subject=Let%E2%80%99s%20talk&body=Hi%20%C3%81lex%2C%0A%0A">amendez83@gmail.com</a>' +
+      '</div>';
   });
 
-  // Final blinking cursor
   var last = makePromptLine();
   last.line.classList.add("show");
 }
 
-window.addEventListener("DOMContentLoaded", init);
+function rebuildTerminal() {
+  buildTerminal();
+}
+
+window.addEventListener("DOMContentLoaded", function(){ buildTerminal(); });
 </script>
 </body>
 </html>
